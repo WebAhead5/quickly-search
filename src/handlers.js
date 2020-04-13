@@ -65,9 +65,10 @@ function getAutoComplete(request, response) {
     // call fetchSuggestionsFromApi()
 }
 function getSuggestions(request, response) {
+
     let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.suggestions,{ term: params.q, api_key: key }, (error, res) => {
+    fetchFromApi(hostAndPaths.suggestions + params.q,{ api_key: key }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
@@ -76,12 +77,11 @@ function getSuggestions(request, response) {
             console.log(suggestionsArr);
             response.writeHead(200, {"content-type": "application/json"});
             response.end(suggestionsArr)
-            // response.end(res.data)
+
         }
     })
 
 }
-
 
 
 function fetchFromApi(apiUrl,params = {}, cb) {
