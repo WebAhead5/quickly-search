@@ -5,7 +5,8 @@
   "main": "./src/server.js",
   "scripts": {
     "test": "tape ./src/tests/**/*.test.js | tap-spec",
-    "server": "nodemon ./src/server.js"
+    "server": "nodemon ./src/server.js",
+    "kill": "killall node"
   },
   "repository": {
     "type": "git",

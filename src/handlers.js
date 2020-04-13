@@ -30,7 +30,29 @@ function home(request, response) {
 
 }
 function resources(request, response) {
-    notFound(request, response);
+    const url = request.url;
+    const exten = url.split('.')[1];
+    const extenType = {
+        html: 'text/html',
+        css: 'text/css',
+        ico: 'image/x-icon',
+        jpeg: 'image/jpeg',
+        jpg: 'image/jpeg',
+        png: 'image/png',
+        gif: 'image/gif'
+    };
+    const filepath = path.join(__dirname, '..', url);
+    fs.readFile(filepath, (error, file) => {
+        if (error) {
+            badRequest(request, response)
+        } else {
+            response.writeHead(200, { 'content-type': extenType[exten] })
+            response.end(file);
+        }
+    })
+
+
+
 }
 function notFound(request, response) {
     //error 404
@@ -48,13 +70,13 @@ function getAutoComplete(request, response) {
 
     let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi( hostAndPaths.autoComplete   ,{ q: params.q, api_key: key },   (error, res) => {
+    fetchFromApi(hostAndPaths.autoComplete, { q: params.q, api_key: key }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
         else {
             let suggestionsArr = Array.from(res.data.data).map(sug => sug.name);
-            response.writeHead(200, {"content-type": "application/json"});
+            response.writeHead(200, { "content-type": "application/json" });
             console.log(suggestionsArr);
             response.end(suggestionsArr)
             // response.end(res.data)
@@ -68,14 +90,14 @@ function getSuggestions(request, response) {
 
     let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.suggestions + params.q,{ api_key: key }, (error, res) => {
+    fetchFromApi(hostAndPaths.suggestions + params.q, { api_key: key }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
         else {
             let suggestionsArr = Array.from(res.data.data).map(sug => sug.name);
             console.log(suggestionsArr);
-            response.writeHead(200, {"content-type": "application/json"});
+            response.writeHead(200, { "content-type": "application/json" });
             response.end(suggestionsArr)
 
         }
@@ -84,7 +106,7 @@ function getSuggestions(request, response) {
 }
 
 
-function fetchFromApi(apiUrl,params = {}, cb) {
+function fetchFromApi(apiUrl, params = {}, cb) {
     let urlObj = new url.URL(apiUrl);
 
     Object.keys(params).forEach(key => {
