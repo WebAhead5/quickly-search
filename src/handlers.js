@@ -96,7 +96,7 @@ function getAutoComplete(request, response) {
  *  return an array of suggestions - words related to the provided word (strings)
  * @param request
  * @param response
- */
+ */ 
 function getSuggestions(request, response) {
 
     let search = url.parse(request.url).query;
