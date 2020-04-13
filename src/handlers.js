@@ -3,14 +3,14 @@ const url = require("url");
 const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
-const querystring = require("querystring")
+const querystring = require("querystring");
 const hostAndPaths = {
     search: "https://api.giphy.com/v1/gifs/search",
     autoComplete: "https://api.giphy.com/v1/gifs/search/tags",
     suggestions: "https://api.giphy.com/v1/tags/related/"
 };
 
-const key = "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
+const api_key_giphy = process.env.API_GIPHY || "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
 
 
 
@@ -23,7 +23,7 @@ function home(request, response) {
             return;
         }
 
-        response.writeHead(200, { "content-type": "text/html" })
+        response.writeHead(200, { "content-type": "text/html" });
         response.end(data)
 
     })
@@ -46,7 +46,7 @@ function resources(request, response) {
         if (error) {
             badRequest(request, response)
         } else {
-            response.writeHead(200, { 'content-type': extenType[exten] })
+            response.writeHead(200, { 'content-type': extenType[exten] });
             response.end(file);
         }
     })
@@ -65,6 +65,7 @@ function badRequest(request, response) {
     response.end("<h1>bad request</h1>");
 }
 
+
 /***
  *  if a get request for "/autocomplete" with a "q" param is made (example: "/autocomplete?q=someText" )
  *  return an array of auto-complete options (strings)
@@ -75,7 +76,7 @@ function getAutoComplete(request, response) {
 
     let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.autoComplete, { q: params.q, api_key: key }, (error, res) => {
+    fetchFromApi(hostAndPaths.autoComplete, { q: params.q, api_key: api_key_giphy }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
@@ -91,6 +92,7 @@ function getAutoComplete(request, response) {
     // call fetchSuggestionsFromApi()
 }
 
+
 /***
  *  if a get request for "/suggestions" with a "q" param is made (example: "/suggestions?q=someText" )
  *  return an array of suggestions - words related to the provided word (strings)
@@ -101,7 +103,7 @@ function getSuggestions(request, response) {
 
     let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.suggestions + params.q, { api_key: key }, (error, res) => {
+    fetchFromApi(hostAndPaths.suggestions + params.q, { api_key: api_key_giphy }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
@@ -114,6 +116,7 @@ function getSuggestions(request, response) {
     })
 
 }
+
 
 /***
  *  if a get request for "/search" with a "q" param is made (example: "/search?q=someText" ).
@@ -128,7 +131,7 @@ function getSuggestions(request, response) {
 function getSearch(request,response){
     let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.search,{ q:params.q ,limit:params.count || 25,api_key: key }, (error, res) => {
+    fetchFromApi(hostAndPaths.search,{ q:params.q ,limit:params.count || 25,api_key: api_key_giphy }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
@@ -137,7 +140,7 @@ function getSearch(request,response){
             response.writeHead(200, {"content-type": "application/json"});
             response.end(JSON.stringify(resultArr))
 
-        }
+          }
     })
 
 }
@@ -164,4 +167,8 @@ function fetchFromApi(apiUrl, params = {}, cb) {
 
 
 
+<<<<<<< HEAD
 module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch }
+=======
+module.exports = { home, resources,notFound, getAutoComplete, getSuggestions,getSearch };
+>>>>>>> 113446048144cc88e8cf9de76c18e18a341ddcb2
