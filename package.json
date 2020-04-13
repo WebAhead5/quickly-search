@@ -6,6 +6,7 @@
   "scripts": {
     "test": "tape ./src/tests/**/*.test.js | tap-spec",
     "server": "nodemon ./src/server.js",
+    "lint": "npx eslint .",
     "kill": "killall node"
   },
   "repository": {

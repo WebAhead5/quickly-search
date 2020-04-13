@@ -3,7 +3,7 @@ const url = require("url");
 const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
-const querystring = require("querystring")
+const querystring = require("querystring");
 const hostAndPaths = {
     search: "https://api.giphy.com/v1/gifs/search",
     autoComplete: "https://api.giphy.com/v1/gifs/search/tags",
@@ -23,7 +23,7 @@ function home(request, response) {
             return;
         }
 
-        response.writeHead(200, { "content-type": "text/html" })
+        response.writeHead(200, { "content-type": "text/html" });
         response.end(data)
 
     })
@@ -46,7 +46,7 @@ function resources(request, response) {
         if (error) {
             badRequest(request, response)
         } else {
-            response.writeHead(200, { 'content-type': extenType[exten] })
+            response.writeHead(200, { 'content-type': extenType[exten] });
             response.end(file);
         }
     })
@@ -64,6 +64,7 @@ function badRequest(request, response) {
     response.writeHead(400, { "content-type": "text/html" });
     response.end("<h1>bad request</h1>");
 }
+
 
 /***
  *  if a get request for "/autocomplete" with a "q" param is made (example: "/autocomplete?q=someText" )
@@ -91,6 +92,7 @@ function getAutoComplete(request, response) {
     // call fetchSuggestionsFromApi()
 }
 
+
 /***
  *  if a get request for "/suggestions" with a "q" param is made (example: "/suggestions?q=someText" )
  *  return an array of suggestions - words related to the provided word (strings)
@@ -115,6 +117,7 @@ function getSuggestions(request, response) {
 
 }
 
+
 /***
  *  if a get request for "/search" with a "q" param is made (example: "/search?q=someText" ).
  *
@@ -137,7 +140,7 @@ function getSearch(request,response){
             response.writeHead(200, {"content-type": "application/json"});
             response.end(JSON.stringify(resultArr))
 
-        }
+          }
     })
 
 }
@@ -164,4 +167,4 @@ function fetchFromApi(apiUrl, params = {}, cb) {
 
 
 
-module.exports = { home, resources, getAutoComplete, getSuggestions,getSearch }
+module.exports = { home, resources,notFound, getAutoComplete, getSuggestions,getSearch };

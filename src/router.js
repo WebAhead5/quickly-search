@@ -1,6 +1,5 @@
 
 const url = require("url");
-const path = require("path");
 const handlers = require("./handlers");
 
 
@@ -15,7 +14,7 @@ function router (request,response) {
     else if(pathname.split(".").length === 2)
         handlers.resources(request,response);
 
-    if(request.method === "GET"){
+    else if(request.method === "GET"){
         if(pathname === "/autocomplete")
             handlers.getAutoComplete(request,response);
         else if(pathname === "/suggestions")
@@ -25,7 +24,7 @@ function router (request,response) {
     }
 
 
-
+    else handlers.notFound(request,response)
 
 
 
