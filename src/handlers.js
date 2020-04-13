@@ -5,12 +5,12 @@ const path = require("path");
 const fs = require("fs");
 const querystring = require("querystring")
 const hostAndPaths = {
-    search: "http://api.giphy.com/v1/gifs/search",
-    autoComplete: "http://api.giphy.com/v1/gifs/search/tags",
-    suggestions: "api.giphy.com/v1/tags/related/"
+    search: "https://api.giphy.com/v1/gifs/search/",
+    autoComplete: "https://api.giphy.com/v1/gifs/search/tags",
+    suggestions: "https://api.giphy.com/v1/tags/related/"
 };
 
-const key = "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo"
+const key = "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
 
 
 
@@ -30,28 +30,34 @@ function home(request, response) {
 
 }
 function resources(request, response) {
-
+    notFound(request, response);
 }
 function notFound(request, response) {
     //error 404
+    response.writeHead(404, { "content-type": "text/html" });
+    response.end("<h1>not found</h1>");
 }
 function badRequest(request, response) {
     //error 400
+    response.writeHead(400, { "content-type": "text/html" });
+    response.end("<h1>bad request</h1>");
 }
 
 
 function getAutoComplete(request, response) {
 
-    let search = url.parse(request.url).search;
+    let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi({ q: params.q, api_key: key }, (error, response) => {
+    fetchFromApi( hostAndPaths.autoComplete   ,{ q: params.q, api_key: key },   (error, res) => {
         if (error) {
             badRequest(request, response)
-        } else {
-            let suggestionsArr = Array.from(response.data.data).map(sug => sug.name);
-            console.log(suggestionsArr);
+        }
+        else {
+            let suggestionsArr = Array.from(res.data.data).map(sug => sug.name);
             response.writeHead(200, {"content-type": "application/json"});
+            console.log(suggestionsArr);
             response.end(suggestionsArr)
+            // response.end(res.data)
         }
     })
 
@@ -60,16 +66,30 @@ function getAutoComplete(request, response) {
 }
 function getSuggestions(request, response) {
 
+    let search = url.parse(request.url).query;
+    let params = querystring.parse(search);
+    fetchFromApi(hostAndPaths.suggestions + params.q,{ api_key: key }, (error, res) => {
+        if (error) {
+            badRequest(request, response)
+        }
+        else {
+            let suggestionsArr = Array.from(res.data.data).map(sug => sug.name);
+            console.log(suggestionsArr);
+            response.writeHead(200, {"content-type": "application/json"});
+            response.end(suggestionsArr)
+
+        }
+    })
+
 }
 
-// function fetchFromApi(searchStr, params = {}, cb) {
 
-function fetchFromApi(params = {}, cb) {
-    let urlObj = new url.URL(hostAndPaths.autoComplete);
+function fetchFromApi(apiUrl,params = {}, cb) {
+    let urlObj = new url.URL(apiUrl);
 
     Object.keys(params).forEach(key => {
         urlObj.searchParams.set(key, params[key]);
-    })
+    });
 
     axios.get(urlObj.toString())
         .then(response => {
