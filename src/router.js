@@ -20,7 +20,8 @@ function router (request,response) {
             handlers.getAutoComplete(request,response);
         else if(pathname === "/suggestions")
             handlers.getSuggestions(request,response);
-
+        else if(pathname === "/search")
+            handlers.getSearch(request,response);
     }
 
 

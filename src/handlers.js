@@ -5,7 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const querystring = require("querystring")
 const hostAndPaths = {
-    search: "https://api.giphy.com/v1/gifs/search/",
+    search: "https://api.giphy.com/v1/gifs/search",
     autoComplete: "https://api.giphy.com/v1/gifs/search/tags",
     suggestions: "https://api.giphy.com/v1/tags/related/"
 };
@@ -65,7 +65,12 @@ function badRequest(request, response) {
     response.end("<h1>bad request</h1>");
 }
 
-
+/***
+ *  if a get request for "/autocomplete" with a "q" param is made (example: "/autocomplete?q=someText" )
+ *  return an array of auto-complete options (strings)
+ * @param request
+ * @param response
+ */
 function getAutoComplete(request, response) {
 
     let search = url.parse(request.url).query;
@@ -75,17 +80,23 @@ function getAutoComplete(request, response) {
             badRequest(request, response)
         }
         else {
-            let suggestionsArr = Array.from(res.data.data).map(sug => sug.name);
-            response.writeHead(200, { "content-type": "application/json" });
-            console.log(suggestionsArr);
-            response.end(suggestionsArr)
-            // response.end(res.data)
+            let resultArr = Array.from(res.data.data).map(sug => sug.name);
+            resultArr.unshift(params.q);
+            response.writeHead(200, {"content-type": "application/json"});
+            response.end(JSON.stringify(resultArr))
         }
     })
 
 
     // call fetchSuggestionsFromApi()
 }
+
+/***
+ *  if a get request for "/suggestions" with a "q" param is made (example: "/suggestions?q=someText" )
+ *  return an array of suggestions - words related to the provided word (strings)
+ * @param request
+ * @param response
+ */
 function getSuggestions(request, response) {
 
     let search = url.parse(request.url).query;
@@ -95,10 +106,36 @@ function getSuggestions(request, response) {
             badRequest(request, response)
         }
         else {
-            let suggestionsArr = Array.from(res.data.data).map(sug => sug.name);
-            console.log(suggestionsArr);
-            response.writeHead(200, { "content-type": "application/json" });
-            response.end(suggestionsArr)
+            let resultArr = Array.from(res.data.data).map(sug => sug.name);
+            response.writeHead(200, {"content-type": "application/json"});
+            response.end(JSON.stringify(resultArr))
+
+        }
+    })
+
+}
+
+/***
+ *  if a get request for "/search" with a "q" param is made (example: "/search?q=someText" ).
+ *
+ *  [optional] a "count" param can be provided as well - indication the number of image objects to return (default 25)
+ *  (example: "/search?q=someText&count=5")
+ *
+ *  return an array of objects containing urls to the provided word (strings).
+ * @param request
+ * @param response
+ */
+function getSearch(request,response){
+    let search = url.parse(request.url).query;
+    let params = querystring.parse(search);
+    fetchFromApi(hostAndPaths.search,{ q:params.q ,limit:params.count || 25,api_key: key }, (error, res) => {
+        if (error) {
+            badRequest(request, response)
+        }
+        else {
+            let resultArr = Array.from(res.data.data).map(sug => sug.images);
+            response.writeHead(200, {"content-type": "application/json"});
+            response.end(JSON.stringify(resultArr))
 
         }
     })
@@ -127,4 +164,4 @@ function fetchFromApi(apiUrl, params = {}, cb) {
 
 
 
-module.exports = { home, resources, getAutoComplete, getSuggestions }
+module.exports = { home, resources, getAutoComplete, getSuggestions,getSearch }
