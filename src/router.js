@@ -11,12 +11,21 @@ function router (request,response) {
     if(pathname === "/")
         handlers.home(request,response);
 
+
     else if(pathname.split(".").length === 2)
         handlers.resources(request,response);
 
+    if(request.method === "GET"){
+        if(pathname === "/autocomplete")
+            handlers.getAutoComplete(request,response);
+        else if(pathname === "/suggestions")
+            handlers.getSuggestions(request,response);
 
-    else if(pathname === "/search" && request.method === "GET")
-        handlers.getAutoComplete(request,response);
+    }
+
+
+
+
 
 
 }

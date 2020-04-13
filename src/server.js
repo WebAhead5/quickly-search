@@ -5,4 +5,5 @@ const router = require("./router");
 
 const server = http.createServer(router);
 
-server.listen(port,()=> console.log(`listening on https://localhost:${port}/`));
+server.listen(port,()=>
+    console.log(`listening on https://localhost:${port}/`));

@@ -17,7 +17,7 @@ function home(request,response){
     fs.readFile(mainPagePath, (error,data)=>{
         if(error)
         {
-            badRequestHandler(request,response);
+            badRequest(request,response);
             return;
         }
 
@@ -26,13 +26,15 @@ function home(request,response){
 
     })
 
-
 }
-
-
-
 function resources(request,response){
 
+}
+function notFound(request,response){
+    //error 404
+}
+function badRequest(request,response){
+//error 400
 }
 
 
@@ -41,7 +43,9 @@ function getAutoComplete(request,response){
 
     // call fetchSuggestionsFromApi()
 }
+function getSuggestions(request,response){
 
+}
 function fetchAutoCompleteFromApi(searchStr){
     let urlObj = new url.URL(hostAndPaths.autoComplete);
     urlObj.searchParams.set("api_key","ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo");
@@ -59,17 +63,8 @@ function fetchAutoCompleteFromApi(searchStr){
 }
 
 
-function notFoundHandler(request,response){
-
-}
-
-function badRequestHandler(request,response){
-//error 400
-}
 
 
 
-fetchAutoCompleteFromApi("cat");
 
-
-module.exports = {home,resources,getAutoComplete}
+module.exports = {home,resources,getAutoComplete,getSuggestions}
