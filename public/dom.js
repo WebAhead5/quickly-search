@@ -9,7 +9,8 @@ async function displayData(){
         var gify;
         data.forEach(obj => {
             gify = document.createElement('img');
-            gify.src =`${obj.url}`;
+            // gify location: obj.data[0].images.original.url
+            gify.src =`${obj.images.original.url}`;
             gify.alt = `${obj.title}`;
             gify.width = "250";
             gify.height = "250";
