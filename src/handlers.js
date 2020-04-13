@@ -164,4 +164,4 @@ function fetchFromApi(apiUrl, params = {}, cb) {
 
 
 
-module.exports = { home, resources, getAutoComplete, getSuggestions,getSearch }
+module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch }

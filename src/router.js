@@ -6,13 +6,14 @@ const handlers = require("./handlers");
 
 function router (request,response) {
     let pathname = url.parse(request.url).pathname;
-
+console.log("pathname is: ",pathname)
 
     if(pathname === "/")
         handlers.home(request,response);
 
 
     else if(pathname.split(".").length === 2)
+    
         handlers.resources(request,response);
 
     if(request.method === "GET"){
@@ -22,6 +23,10 @@ function router (request,response) {
             handlers.getSuggestions(request,response);
         else if(pathname === "/search")
             handlers.getSearch(request,response);
+    }
+
+    else {
+        handlers.notFound(request, response);
     }
 
 
