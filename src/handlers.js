@@ -10,7 +10,7 @@ const hostAndPaths = {
     suggestions: "https://api.giphy.com/v1/tags/related/"
 };
 
-const key = "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
+const api_key_giphy = process.env.API_GIPHY || "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
 
 
 
@@ -76,7 +76,7 @@ function getAutoComplete(request, response) {
 
     let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.autoComplete, { q: params.q, api_key: key }, (error, res) => {
+    fetchFromApi(hostAndPaths.autoComplete, { q: params.q, api_key: api_key_giphy }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
@@ -103,7 +103,7 @@ function getSuggestions(request, response) {
 
     let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.suggestions + params.q, { api_key: key }, (error, res) => {
+    fetchFromApi(hostAndPaths.suggestions + params.q, { api_key: api_key_giphy }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
@@ -131,7 +131,7 @@ function getSuggestions(request, response) {
 function getSearch(request,response){
     let search = url.parse(request.url).query;
     let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.search,{ q:params.q ,limit:params.count || 25,api_key: key }, (error, res) => {
+    fetchFromApi(hostAndPaths.search,{ q:params.q ,limit:params.count || 25,api_key: api_key_giphy }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
