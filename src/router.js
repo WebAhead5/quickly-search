@@ -24,12 +24,9 @@ console.log("pathname is: ",pathname)
             handlers.getSearch(request,response);
     }
 
-    else {
-        handlers.notFound(request, response);
-    }
+    else handlers.notFound(request, response);
 
 
-    else handlers.notFound(request,response)
 
 
 
