@@ -4,6 +4,7 @@ const handlers = require("./handlers");
 
 
 function router (request,response) {
+
     let pathname = url.parse(request.url).pathname;
     console.log("pathname is: ",pathname);
 
@@ -12,11 +13,11 @@ function router (request,response) {
 
 
     else if(pathname.split(".").length === 2)
-    
         handlers.resources(request,response);
 
+
     else if(request.method === "GET"){
-        if(pathname === "/autocomplete")
+               if(pathname === "/autocomplete")
             handlers.getAutoComplete(request,response);
         else if(pathname === "/suggestions")
             handlers.getSuggestions(request,response);

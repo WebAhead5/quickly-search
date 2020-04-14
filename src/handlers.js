@@ -37,6 +37,7 @@ function resources(request, response) {
     const extenType = {
         html: 'text/html',
         css: 'text/css',
+        js: 'application/javascript',
         ico: 'image/x-icon',
         jpeg: 'image/jpeg',
         jpg: 'image/jpeg',
@@ -74,7 +75,6 @@ function badRequest(request, response) {
  * @param response
  */
 function getAutoComplete(request, response) {
-
     let params = getParamsFromRequest(request);
     fetchTextFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q: params.q})
 }
@@ -127,16 +127,16 @@ function getParamsFromRequest(request){
 }
 function fetchImagesFromGiphyRequest(request,response,apiRequestLink,params = {} ) {
 
-    fetchFromApi(apiRequestLink ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
+    fetchFromApi(apiRequestLink, {...params, api_key: api_key_giphy}, (error, res) => {
         if (error) {
             badRequest(request, response)
-        }
-        else {
+        } else {
             let resultArr = Array.from(res.data.data).map(element => {
                 return {...element.images, id: element.id}
-            });type="module"
-
+            });
+        }
     })
+
 }
 function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {} ) {
 
