@@ -7,20 +7,19 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<header>
-    <div>
-    <form class="search" action="/search" method="GET">
-        <h1>Search for your favorite Gify</h1>
-        <input id="inpt_search" name="q" type="text"/>
-        <button type="submit">search</button>
-    </form>
+
+<div class="bodyContainer">
+    <div id="searchAndSuggestions">
+        <div id="searchBarContainer">
+            <input type="searchInput">
+            <img src="./resources/icon-search.svg" alt="Magnifying glass icon">
+        </div>
+        <div id="suggestionsContainer"></div>
+    </div>
 </div>
 
-<div>
-    
-</div>
 
-</header>
+
 <script src="./logic.js"></script>
 <script src="./dom.js"></script>
 </body>

@@ -42,9 +42,10 @@ function resources(request, response) {
         jpeg: 'image/jpeg',
         jpg: 'image/jpeg',
         png: 'image/png',
-        gif: 'image/gif'
+        gif: 'image/gif',
+        svg: 'image/svg+xml'
     };
-    const filepath = path.join(__dirname, '..', url);
+    const filepath = path.join(__dirname, '..', "public", url);
     fs.readFile(filepath, (error, file) => {
         if (error) {
             badRequest(request, response)
