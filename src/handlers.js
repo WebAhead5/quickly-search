@@ -54,7 +54,6 @@ function resources(request, response) {
     })
 
 
-
 }
 function notFound(request, response) {
     //error 404
@@ -135,10 +134,7 @@ function fetchImagesFromGiphyRequest(request,response,apiRequestLink,params = {}
         else {
             let resultArr = Array.from(res.data.data).map(element => {
                 return {...element.images, id: element.id}
-            });
-            response.writeHead(200, {"content-type": "application/json"});
-            response.end(JSON.stringify(resultArr))
-        }
+            });type="module"
 
     })
 }
