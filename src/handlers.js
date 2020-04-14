@@ -77,7 +77,7 @@ function badRequest(request, response) {
 function getAutoComplete(request, response) {
 
     let params = getParamsFromRequest(request);
-    fetchFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q:params.q })
+    fetchTextFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q: params.q})
 }
 
 
@@ -90,7 +90,7 @@ function getAutoComplete(request, response) {
 function getSuggestions(request, response) {
 
     let params = getParamsFromRequest(request);
-    fetchFromGiphyRequest(request,response,hostAndPaths.suggestions + params.q)
+    fetchTextFromGiphyRequest(request,response,hostAndPaths.suggestions + params.q)
 
 }
 
@@ -108,12 +108,14 @@ function getSuggestions(request, response) {
 function getSearch(request,response){
 
     let params = getParamsFromRequest(request);
-    fetchFromGiphyRequest(request,response,hostAndPaths.search,{q:params.q ,limit:params.count || 25})
+
+    fetchImagesFromGiphyRequest(request,response,hostAndPaths.search,{q:params.q ,limit:params.count || 25} )
+
 }
 
 function getTrending(request,response){
     let params = getParamsFromRequest(request);
-    fetchFromGiphyRequest(request,response,hostAndPaths.trending,{q:params.q ,limit:params.count || 25} )
+    fetchImagesFromGiphyRequest(request,response,hostAndPaths.trending,{q:params.q ,limit:params.count || 25} )
 
 }
 
@@ -124,24 +126,36 @@ function getParamsFromRequest(request){
     let search = url.parse(request.url).query;
     return  querystring.parse(search);
 }
-function fetchFromGiphyRequest(request,response,apiRequestLink,params = {} , getTrending /* = undefined */) {
+function fetchImagesFromGiphyRequest(request,response,apiRequestLink,params = {} ) {
 
     fetchFromApi(apiRequestLink ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
         if (error) {
             badRequest(request, response)
         }
         else {
-            if(getTrending)
-            {
-                getTrending(res);
-                return;
-            }
-            let resultArr = Array.from(res.data.data).map(sug => sug.images);
+            let resultArr = Array.from(res.data.data).map(element => {
+                return {...element.images, id: element.id}
+            });
             response.writeHead(200, {"content-type": "application/json"});
             response.end(JSON.stringify(resultArr))
-
         }
+
     })
+}
+function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {} ) {
+
+    fetchFromApi(apiRequestLink ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
+        if (error) {
+            badRequest(request, response)
+        }
+        else {
+            let resultArr = Array.from(res.data.data).map(x=>x.name);
+            response.writeHead(200, {"content-type": "application/json"});
+            response.end(JSON.stringify(resultArr))
+        }
+
+
+    });
 }
 function fetchFromApi(apiUrl, params = {}, cb) {
     let urlObj = new url.URL(apiUrl);

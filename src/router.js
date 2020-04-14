@@ -5,7 +5,7 @@ const handlers = require("./handlers");
 
 function router (request,response) {
     let pathname = url.parse(request.url).pathname;
-console.log("pathname is: ",pathname)
+    console.log("pathname is: ",pathname);
 
     if(pathname === "/")
         handlers.home(request,response);
