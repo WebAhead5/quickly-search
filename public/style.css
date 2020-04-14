@@ -1,19 +1,127 @@
 * {
     margin: 0;
     padding: 0;
+    --border-radius : 20px;
+    --color-page-background : #393652;
+    --color-bubble:#67A6C0;
+}
+
+div{
+    background-color: rgba(255,255,255,0.2);
 }
 
 body {
-    /*display: grid;*/
-    /*text-align: center;*/
-    /*justify-content: center;*/
-    /*align-content: center;*/
+    background: var(--color-page-background);
+
 }
 
-form {
-    width: 90vw;
-    height: 20vw;
+#bodyContainer {
+
+    /*todo remove the line underneath*/
+    background-color: unset !important;
+
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    padding: 10px;
+
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center ;
+    align-items: center;
 }
+
+#searchAndSuggestions{
+    width:400px;
+
+}
+#searchBarContainer{
+    position: relative;
+    width: 100%;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 10px;
+
+}
+#searchButton{
+    position: absolute;
+    right: 5px;
+
+    width: 45px;
+    height: 45px;
+
+    border-radius: var(--border-radius);
+
+
+}
+#searchButton:hover{
+    cursor: pointer;
+}
+#searchInput{
+    width: 100%;
+    height: 100%;
+    /*text-align: center;*/
+    padding: 0 60px 0 10px;
+
+    border-radius: var(--border-radius);
+    border: 1px black solid;
+
+}
+
+
+#contentContainer{
+    width:100%;
+    height: 100%;
+
+    padding: 10px;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(auto-fit ,  [col] 100px );
+    grid-auto-rows: 100px;
+    justify-content:center;
+    grid-gap: 10px;
+
+
+}
+
+
+.contentElement_height_2fr{
+    background-color: darkred;
+    grid-row: span 2;
+
+}
+.contentElement_width_2fr{
+    background-color: darkred;
+    grid-column: span 2;
+}
+
+#suggestionsContainer{
+    display: flex;
+    flex-flow: wrap row;
+    justify-content: space-around;
+    width: 100%;
+}
+.suggestionBubble{
+    width: max-content;
+    margin: 5px;
+    padding: 0 5px;
+    box-sizing: content-box;
+    text-align: center;
+    background-color: var(--color-bubble);
+    border-radius: var(--border-radius);
+    user-select: none;
+}
+
+
+
 
 .container {
     margin-top: 10px;
@@ -24,7 +132,6 @@ form {
     height: 100vw;
     
 }
-
 .box {
     margin: 5px;
     width: 250px;
