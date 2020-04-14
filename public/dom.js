@@ -15,7 +15,7 @@ searchBtn.addEventListener('click', () => {
 //if mousedown is the return button
 searchInputField.addEventListener('input', () => {
     let str =searchInputField.value;
-    loadData(str)
+    setTimeout(loadData(str), 500)
 
 });
 
