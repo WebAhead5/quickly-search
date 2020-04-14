@@ -5,7 +5,9 @@
   "main": "./src/server.js",
   "scripts": {
     "test": "tape ./src/tests/**/*.test.js | tap-spec",
-    "server": "nodemon ./src/server.js"
+    "server": "nodemon ./src/server.js",
+    "lint": "npx eslint .",
+    "kill": "killall node"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,7 @@
     "tape": "^4.13.2"
   },
   "dependencies": {
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0"
   }
 }
