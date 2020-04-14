@@ -1,22 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<h1>GIFY</h1>
-<input type="text" id="searchInput">
-<input type="button" id="searchButton">
-<div id="container">
-    
+
+<div id="bodyContainer">
+    <div id="searchAndSuggestions">
+        <div id="searchBarContainer">
+            <input type="search" id="searchInput" placeholder="search...">
+            <img src="./resources/icon-search.svg" alt="Magnifying glass icon" id="searchButton">
+        </div>
+        <div id="suggestionsContainer">
+            <div class="suggestionBubble">tetttttttttttttxt</div>
+            <div class="suggestionBubble">texttttttt</div>
+            <div class="suggestionBubble">tetttttttttttttxt</div>
+            <div class="suggestionBubble">tttttttext</div>
+            <div class="suggestionBubble">text</div>
+            <div class="suggestionBubble">tetttttttttttttxt</div>
+            <div class="suggestionBubble">tetttttttttttttxt</div>
+            <div class="suggestionBubble">tetttttttttttttxt</div>
+
+        </div>
+    </div>
+
+    <div id="contentContainer">
+        <div class="contentElement">1</div>
+        <div class="contentElement contentElement_width_2fr">2</div>
+        <div class="contentElement">3</div>
+        <div class="contentElement">4</div>
+        <div class="contentElement">5</div>
+        <div class="contentElement">6</div>
+        <div class="contentElement">7</div>
+        <div class="contentElement">8</div>
+        <div class="contentElement">9</div>
+        <div class="contentElement">10</div>
+        <div class="contentElement contentElement_height_2fr">11</div>
+        <div class="contentElement">12</div>
+        <div class="contentElement">13</div>
+        <div class="contentElement">14</div>
+        <div class="contentElement">15</div>
+
+    </div>
 </div>
+
+
 
 <script src="./logic.js"></script>
 <script src="./dom.js"></script>
 </body>
+
 </html>
