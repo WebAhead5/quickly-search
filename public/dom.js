@@ -1,28 +1,28 @@
 function displayData(){
-    
     var contents = document.getElementById('container');
-    var searchInput= document.getElementById('search');
+    var input = document.getElementById('searchInput');
+    var searchBtn = document.getElementById('searchButton');
+    
     var data;
     
     //on click search button
-    SearchButton.addEventListener('click', () => {
-        getSearch({q: searchInput.value}, (err,resp) => {
+    searchBtn.addEventListener('click', () => {
+        getSearch({q: input.value}, (err,resp) => {
             data = resp; 
             console.log(data);
         });
     });
     
     //if mousedown is the return button
-    searchInput.addEventListener('input', () => {
-            getSearch({q: searchInput.value}, (err,resp) => {
+    input.addEventListener('input', () => {
+            getSearch({q: input.value}, (err,resp) => {
             data = resp; 
             console.log(data);
         });
     });
                       
-    
     var gify;   
-    data.forEach(obj => {
+    Array.from(data).forEach(obj => {
         gify = document.createElement('img');
         gify.src =`${obj.original.url}`;
         gify.alt = `${obj.title}`;
@@ -31,36 +31,4 @@ function displayData(){
         contents.appendChild(gify);
     });
 }
-
-
-
-//function displayData(){
-//    var contents = document.getElementById('container');
-//    var gify;   
-//    fetchData()
-//        .then ( data => { 
-//            data.forEach(obj => {
-//            gify = document.createElement('img');
-//            gify.src =`${obj.original.url}`;
-//            gify.alt = `${obj.title}`;
-//            gify.width = `${obj.original.height}`;
-//            gify.height = `${obj.original.width}`;
-//            contents.appendChild(gify);
-//            })
-//    })
-//        .catch( err => {
-//            alert('display error results');
-//    });
-//}
-//
-//
-//async function fetchData(){
-//        var str= document.getElementById('search').value;
-//        const response = await fetch('/search?q=' + encodeURI("search str"));
-//        const data = await response.json();    
-//}
-=======
-
-
-// import * as logic from "./logic.js"
->>>>>>> a0c51e5b2c025ebd12b1cb5cbcd983376aea2380
+displayData();
