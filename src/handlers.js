@@ -7,7 +7,9 @@ const querystring = require("querystring");
 const hostAndPaths = {
     search: "https://api.giphy.com/v1/gifs/search",
     autoComplete: "https://api.giphy.com/v1/gifs/search/tags",
-    suggestions: "https://api.giphy.com/v1/tags/related/"
+    suggestions: "https://api.giphy.com/v1/tags/related/",
+    trending: "https://api.giphy.com/v1/gifs/trending",
+    random: "https://api.giphy.com/v1/gifs/trending",
 };
 
 const api_key_giphy = process.env.API_GIPHY || "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
@@ -74,22 +76,8 @@ function badRequest(request, response) {
  */
 function getAutoComplete(request, response) {
 
-    let search = url.parse(request.url).query;
-    let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.autoComplete, { q: params.q, api_key: api_key_giphy }, (error, res) => {
-        if (error) {
-            badRequest(request, response)
-        }
-        else {
-            let resultArr = Array.from(res.data.data).map(sug => sug.name);
-            resultArr.unshift(params.q);
-            response.writeHead(200, {"content-type": "application/json"});
-            response.end(JSON.stringify(resultArr))
-        }
-    })
-
-
-    // call fetchSuggestionsFromApi()
+    let params = getParamsFromRequest(request);
+    fetchFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q:params.q })
 }
 
 
@@ -101,19 +89,8 @@ function getAutoComplete(request, response) {
  */ 
 function getSuggestions(request, response) {
 
-    let search = url.parse(request.url).query;
-    let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.suggestions + params.q, { api_key: api_key_giphy }, (error, res) => {
-        if (error) {
-            badRequest(request, response)
-        }
-        else {
-            let resultArr = Array.from(res.data.data).map(sug => sug.name);
-            response.writeHead(200, {"content-type": "application/json"});
-            response.end(JSON.stringify(resultArr))
-
-        }
-    })
+    let params = getParamsFromRequest(request);
+    fetchFromGiphyRequest(request,response,hostAndPaths.suggestions + params.q)
 
 }
 
@@ -129,23 +106,43 @@ function getSuggestions(request, response) {
  * @param response
  */
 function getSearch(request,response){
-    let search = url.parse(request.url).query;
-    let params = querystring.parse(search);
-    fetchFromApi(hostAndPaths.search,{ q:params.q ,limit:params.count || 25,api_key: api_key_giphy }, (error, res) => {
-        if (error) {
-            badRequest(request, response)
-        }
-        else {
-            let resultArr = Array.from(res.data.data).map(sug => sug.images);
-            response.writeHead(200, {"content-type": "application/json"});
-            response.end(JSON.stringify(resultArr))
 
-          }
-    })
+    let params = getParamsFromRequest(request);
+    fetchFromGiphyRequest(request,response,hostAndPaths.search,{q:params.q ,limit:params.count || 25})
+}
+
+function getTrending(request,response){
+    let params = getParamsFromRequest(request);
+    fetchFromGiphyRequest(request,response,hostAndPaths.trending,{q:params.q ,limit:params.count || 25} )
 
 }
 
 
+
+
+function getParamsFromRequest(request){
+    let search = url.parse(request.url).query;
+    return  querystring.parse(search);
+}
+function fetchFromGiphyRequest(request,response,apiRequestLink,params = {} , getTrending /* = undefined */) {
+
+    fetchFromApi(apiRequestLink ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
+        if (error) {
+            badRequest(request, response)
+        }
+        else {
+            if(getTrending)
+            {
+                getTrending(res);
+                return;
+            }
+            let resultArr = Array.from(res.data.data).map(sug => sug.images);
+            response.writeHead(200, {"content-type": "application/json"});
+            response.end(JSON.stringify(resultArr))
+
+        }
+    })
+}
 function fetchFromApi(apiUrl, params = {}, cb) {
     let urlObj = new url.URL(apiUrl);
 
@@ -166,5 +163,5 @@ function fetchFromApi(apiUrl, params = {}, cb) {
 
 
 
-module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch }
+module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch , getTrending}
 

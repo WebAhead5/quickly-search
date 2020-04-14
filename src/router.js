@@ -22,6 +22,9 @@ console.log("pathname is: ",pathname)
             handlers.getSuggestions(request,response);
         else if(pathname === "/search")
             handlers.getSearch(request,response);
+        else if(pathname === "/trending")
+            handlers.getTrending(request,response);
+
     }
 
     else handlers.notFound(request, response);
