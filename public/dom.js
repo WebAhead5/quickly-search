@@ -3,22 +3,23 @@
 var contents = document.getElementById('contentContainer');
 var suggestionsContainer = document.getElementById('suggestionsContainer');
 var autoCompleteContainer = document.getElementById('autocompleteContainer');
-var input = document.getElementById('searchInput');
+var searchInputField = document.getElementById('searchInput');
+var searchBarContainer = document.getElementById('searchBarContainer');
 var searchBtn = document.getElementById('searchButton');
 
 
 //on click search button
 searchBtn.addEventListener('click', () => {
-    loadData(input.value);
+    loadData(searchInputField.value);
 });
 //if mousedown is the return button
-input.addEventListener('input', () => {
-    let str =input.value;
+searchInputField.addEventListener('input', () => {
+    let str =searchInputField.value;
     loadData(str)
 
 });
 
-input.addEventListener('change', () => {
+searchInputField.addEventListener('change', () => {
 
 
 });
@@ -28,6 +29,7 @@ input.addEventListener('change', () => {
 function loadData(str){
     //hide container if empty
     contents.classList.toggle("hidden",!str || str ==="")
+    searchBarContainer.classList.toggle("searchBarWithInput",str && str !=="")
 
 
     getSearch({q: str}, (err,resp) => {
@@ -64,7 +66,7 @@ function loadSuggestionsIntoHtml(dataToLoad, container){
         let bubble = document.createElement('span');
         bubble.textContent= obj;
         bubble.onclick = ()=>{
-            input.value= obj;
+            searchInputField.value= obj;
             loadData(obj)
 
         };
