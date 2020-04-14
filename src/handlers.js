@@ -135,6 +135,9 @@ function fetchImagesFromGiphyRequest(request,response,apiRequestLink,params = {}
             let resultArr = Array.from(res.data.data).map(element => {
                 return {...element.images, id: element.id}
             });
+            response.writeHead(200,{"content-type": "application/json"});
+            response.end(JSON.stringify(resultArr))
+
         }
     })
 
