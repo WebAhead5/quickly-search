@@ -15,13 +15,13 @@ function displayData(){
     
     //if mousedown is the return button
     input.addEventListener('input', () => {
-            getSearch({q: input.value, count:1}, (err,resp) => {
+            getSearch({q: input.value}, (err,resp) => {
             data = resp;
+            contents.innerHTML="";
             loadData(resp,contents)
         });
     });
                       
-    var gify;
 
 }
 displayData();
@@ -34,10 +34,6 @@ function loadData(dataToLoad,container){
 
        let gify = document.createElement('div');
         gify.innerHTML= `<img src="${obj.original.url}">`;
-        // gify.src =`${obj.original.url}`;
-        // gify.alt = `${obj.title}`;
-        // gify.width = `${obj.original.height}`;
-        // gify.height = `${obj.original.width}`;
         gify.classList.add("contentElement")
         container.appendChild(gify);
     });
