@@ -1,4 +1,33 @@
-body{
+* {
+    margin: 0;
+    padding: 0;
+}
 
-    background: black;
+body {
+    display: grid;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+}
+
+form {
+    width: 90vw;
+    height: 20vw;
+}
+
+.container {
+    margin-top: 10px;
+    display: flex;
+    padding: 5px;
+    border: 2px solid black;
+    width: 90vw;
+    height: 100vw;
+    
+}
+
+.box {
+    margin: 5px;
+    width: 250px;
+    height: 250px;
+    border: blue solid 2px;
 }
