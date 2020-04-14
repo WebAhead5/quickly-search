@@ -30,7 +30,7 @@ function router (request,response) {
 
     else handlers.notFound(request, response);
 
-
+    return {q: "....", count: 5}
 
 
 
