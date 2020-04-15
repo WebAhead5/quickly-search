@@ -54,6 +54,15 @@ function initialize(){
         selectedItemContainer.classList.toggle("hidden",true)
     }
 
+    //when an image is selected - press escape to close it
+    document.addEventListener("keydown",e => {
+        console.log(e.code)
+           if( e.code === "Escape"  && !selectedItemBackground.classList.contains("hidden"))
+           selectedItemContainer.classList.toggle("hidden",true)
+    });
+
+
+
 }
 
 
