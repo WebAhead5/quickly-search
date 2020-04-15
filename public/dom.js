@@ -7,11 +7,12 @@ var searchInputField = document.getElementById('searchInput');
 var searchBarContainer = document.getElementById('searchBarContainer');
 var searchBtn = document.getElementById('searchButton');
 let wallpaperDiv = document.getElementById("wallpaperImage");
-const contentLoadingCount= 20;
-const scrollingPercentage = 0.66;
-let timeoutID_scroll, timeoutID_fetchData;
-let timeoutMS = 300;
 
+const contentLoadingCount= 10;
+const scrollingPercentage = 0.66;
+let timeoutID_scroll, timeoutID_fetchData, timeoutID_notScrollable;
+let timeoutMS = 300;
+let loadedImagesCount = 0;
 
 initialize();
 
@@ -29,10 +30,12 @@ function initialize(){
     //set content scroll behaviour
     contents.addEventListener("scroll", ()=> {
 
-        let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
+        let loadToHtml = (err, dataToLoad) => loadContentToHtml(dataToLoad, contents, true);
 
         let fetchContent = ()=> {
-           getSearch({q: searchInputField.value, count: contentLoadingCount, start: contents.childElementCount }, loadToHtml )
+            loadedImagesCount += contentLoadingCount;
+            let  startingIndex = loadedImagesCount;
+            getSearch({q: searchInputField.value, count: contentLoadingCount, start: startingIndex }, loadToHtml )
         };
 
         onScrollerAt(contents, scrollingPercentage, () => {
@@ -52,7 +55,7 @@ function initialize(){
 
     });
 
-
+    loadContentIfNotScrollable()
 
 }
 
@@ -61,34 +64,39 @@ function initialize(){
 function loadData(str) {
 
 
-        //hide container if the search-bar input is empty
-        contents.classList.toggle("hidden", !str || str === "")
+    //hide container if the search-bar input is empty
+    contents.classList.toggle("hidden", !str || str === "")
 
-        //hide wallpaper if the search-bar input is empty
-        wallpaperDiv.classList.toggle("wallpaperHidden", str && str !== "");
+    //hide wallpaper if the search-bar input is empty
+    wallpaperDiv.classList.toggle("wallpaperHidden", str && str !== "");
 
-        //expand search-bar if the input is not empty
-        searchBarContainer.classList.toggle("searchBarContainer_withInput", str && str !== "")
+    //expand search-bar if the input is not empty
+    searchBarContainer.classList.toggle("searchBarContainer_withInput", str && str !== "")
 
 
-        getSearch({q: str, count: contentLoadingCount}, (err, resp) => {
-            loadContentToHtml(resp, contents);
+    loadedImagesCount = 0;
 
-        });
 
-        getSuggestions({q: str}, (err, resp) => {
-            loadSuggestionsToHTML(resp, suggestionsContainer)
-        });
+    getSearch({q: str, count: contentLoadingCount}, (err, resp) => {
+        loadContentToHtml(resp, contents);
 
-        getAutocomplete({q: str}, (err, resp) => {
-            loadAutocompleteToHTML(resp, autoCompleteContainer)
-        });
+    });
+
+    getSuggestions({q: str}, (err, resp) => {
+        loadSuggestionsToHTML(resp, suggestionsContainer)
+    });
+
+    getAutocomplete({q: str}, (err, resp) => {
+        loadAutocompleteToHTML(resp, autoCompleteContainer)
+    });
 
 
 }
 function loadContentToHtml(dataToLoad, container,isAppend = false){
    if(!isAppend)
-        container.innerHTML="";
+       container.innerHTML="";
+
+
     dataToLoad.forEach(obj => {
 
        let gify = document.createElement('div');
@@ -129,6 +137,32 @@ function loadAutocompleteToHTML(dataToLoad, container){
     });
 }
 
+function loadContentIfNotScrollable(){
+    setInterval(()=> {
+
+        if(!isScrollable(contents)) {
+
+            let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
+
+            let fetchContent = () => {
+                loadedImagesCount += contentLoadingCount;
+               let  startingIndex = loadedImagesCount;
+
+                getSearch({
+                    q: searchInputField.value,
+                    count: contentLoadingCount,
+                    start: startingIndex
+                }, loadToHtml)
+            };
+
+            timeoutID_notScrollable = runOnceDelay(timeoutID_notScrollable, 0, fetchContent);
+        }
+
+    } , 300)
+
+}
+
+
 function onScrollerAt(scrollingDiv, posPercentage, cb) {
 
         // document bottom
@@ -145,4 +179,12 @@ function runOnceDelay(timeoutID, timeoutMS, cb) {
 
     clearTimeout(timeoutID);
     return  setTimeout(cb, timeoutMS)
+}
+function isScrollable(div) {
+    let height = div.clientHeight;
+    let scrollableAreaSize= div.scrollHeight;
+
+    return height < scrollableAreaSize;
+
+
 }
