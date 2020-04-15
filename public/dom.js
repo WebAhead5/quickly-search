@@ -8,8 +8,12 @@ var searchBarContainer = document.getElementById('searchBarContainer');
 var searchBtn = document.getElementById('searchButton');
 let wallpaperDiv = document.getElementById("wallpaperImage");
 
-const contentLoadingCount= 10;
-const scrollingPercentage = 0.66;
+let selectedItemContainer = document.getElementById("selectedItemContainer");
+let selectedItemBackground = document.getElementById("outsideSelectedItem");
+let selectedItemImage = document.getElementById("selectedItem");
+
+const contentLoadingCount= 30;
+const scrollingPercentage = 0.5;
 let timeoutID_scroll, timeoutID_fetchData, timeoutID_notScrollable;
 let timeoutMS = 300;
 let loadedImagesCount = 0;
@@ -57,6 +61,11 @@ function initialize(){
 
     loadContentIfNotScrollable()
 
+
+    selectedItemBackground.onclick = ()=>{
+        selectedItemContainer.classList.toggle("hidden",true)
+    }
+
 }
 
 
@@ -65,7 +74,7 @@ function loadData(str) {
 
 
     //hide container if the search-bar input is empty
-    contents.classList.toggle("hidden", !str || str === "")
+    contents.classList.toggle("hideContent", !str || str === "")
 
     //hide wallpaper if the search-bar input is empty
     wallpaperDiv.classList.toggle("wallpaperHidden", str && str !== "");
@@ -96,14 +105,22 @@ function loadContentToHtml(dataToLoad, container,isAppend = false){
    if(!isAppend)
        container.innerHTML="";
 
-
     dataToLoad.forEach(obj => {
 
-       let gify = document.createElement('div');
-        gify.innerHTML= `<img src="${obj["preview_gif"].url}">`;
-        gify.classList.add("contentElement");
+       let gif = document.createElement('div');
+        gif.innerHTML= `<img src="${obj["preview_gif"].url}">`;
+        gif.classList.add("contentElement");
+        gif.onclick = ()=>{
+            selectedItemContainer.classList.toggle("hidden",false);
+            selectedItemImage.style.background= `url(${obj["original"].url})`;
+           let aspectRatio=  obj["original"].width /   obj["original"].height;
+            let max = Math.max(obj["original"].width ,   obj["original"].height);
+            // let other =
+            selectedItemImage.style.width = `${max * 200}px`;
+            selectedItemImage.style.height = `${aspectRatio * 200}px`;
+        };
 
-        container.appendChild(gify);
+        container.appendChild(gif);
     });
 
 }
