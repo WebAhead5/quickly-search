@@ -13,17 +13,15 @@ let selectedItemContainer = document.getElementById("selectedItemContainer");
 let selectedItemBackground = document.getElementById("outsideSelectedItem");
 let selectedItemImage = document.getElementById("selectedItem");
 //--------------------------------------------------------------------------------------
-const contentLoadingCount= 20;
-const scrollingPercentage = 0.5; //at what percentage from the scroll bar to load the next images
-let timeoutID_scroll, timeoutID_fetchData, timeoutID_notScrollable;
-let timeoutMS = 300;
+const contentLoadingCount= 10;
+const scrollingPercentage = .8; //at what percentage from the scroll bar to load the next images
+let  timeoutID_fetchData, timeoutID_notScrollable;
+let timeoutMS = 100;
 let loadedImagesCount = 0;
+let canLoadContent = true;
 //--------------------------------------------------------------------------------------
 
 initialize();
-
-
-
 
 function initialize(){
 
@@ -32,22 +30,10 @@ function initialize(){
         wallpaperDiv.style.background = `url(${result.url})`
     });
 
-
     //set content scroll behaviour
     contents.addEventListener("scroll", ()=> {
 
-        let loadToHtml = (err, dataToLoad) => loadContentToHtml(dataToLoad, contents, true);
-
-        let fetchContent = ()=> {
-            loadedImagesCount += contentLoadingCount;
-            let  startingIndex = loadedImagesCount;
-            logic.getSearch({q: searchInputField.value, count: contentLoadingCount, start: startingIndex }, loadToHtml )
-        };
-
-        logic.onScrollerAt(contents, scrollingPercentage, () => {
-            timeoutID_scroll = logic.runOnceDelay( timeoutID_scroll,timeoutMS,fetchContent);
-        });
-
+        append_notScrollable_and_OnScroll()
     });
 
     //set the search button click event
@@ -62,8 +48,6 @@ function initialize(){
         timeoutID_fetchData = logic.runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
 
     });
-
-
 
     //when an image is selected - press outside it to close it
     selectedItemBackground.onclick = ()=>{
@@ -98,7 +82,6 @@ function loadData(str) {
     logic.getAutocomplete({q: str}, (err, resp) => {
         loadAutocompleteToHTML(resp, autoCompleteContainer)
     });
-
 
     //load content
     logic.getSearch({q: str, count: contentLoadingCount}, (err, resp) => {
@@ -143,7 +126,8 @@ function loadContentToHtml(dataToLoad, container,isAppend = false){
         container.appendChild(gif);
     });
     //load images if no scroll bar is showing
-    loadContentIfNotScrollable();
+    canLoadContent = true;
+    append_notScrollable_and_OnScroll();
 }
 function loadSuggestionsToHTML(dataToLoad, container) {
     container.innerHTML = "";
@@ -176,25 +160,36 @@ function loadAutocompleteToHTML(dataToLoad, container){
         container.appendChild(option);
     });
 }
-function loadContentIfNotScrollable() {
+function append_notScrollable_and_OnScroll() {
 
+    let isNotScrollableAndTextNotEmpty = !logic.isScrollable(contents) && searchInputField.value;
+    let scrollerPassedMarker = logic.isScrollerPast(contents, scrollingPercentage)
 
-    if (!logic.isScrollable(contents) && searchInputField.value ) {
+    if (canLoadContent)
+        if (isNotScrollableAndTextNotEmpty || scrollerPassedMarker) {
 
-        let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
+            //a callback to load the data to the html
+            let loadToHtml = function(err, jsonObj) {
+                loadContentToHtml(jsonObj, contents, true);
+            }
 
-        let fetchContent = () => {
-            loadedImagesCount += contentLoadingCount;
-            let startIndex = loadedImagesCount;
-            logic.getSearch({
-                q: searchInputField.value,
-                count: contentLoadingCount,
-                start: startIndex
-            }, loadToHtml)
-        };
+            //
+            let fetchContentFromBackend = function (){
 
-        timeoutID_notScrollable = logic.runOnceDelay(timeoutID_notScrollable, 30, fetchContent);
-    }
+                //count the appended elements
+                loadedImagesCount += contentLoadingCount;
+                let startIndex = loadedImagesCount;
+
+                //get the data from the backend and load it into the html
+                logic.getSearch({q: searchInputField.value, count: contentLoadingCount, start: startIndex}
+                    , loadToHtml)
+
+            };
+
+            //a way to avoid appending every frame
+            timeoutID_notScrollable = logic.runOnceDelay(timeoutID_notScrollable, 20, fetchContentFromBackend);
+            canLoadContent = false;
+        }
 }
 
 
