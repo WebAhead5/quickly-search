@@ -45,6 +45,7 @@ function initialize(){
 
     //set the search bar text change behaviour
     searchInputField.addEventListener('input', () => {
+        searchInputField.value = logic.filterInput(searchInputField.value);
         timeoutID_fetchData = logic.runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
 
     });
@@ -201,6 +202,5 @@ function append_notScrollable_and_OnScroll() {
             canLoadContent = false;
         }
 }
-
 
 //--------------------------------------------------------------------------------------
