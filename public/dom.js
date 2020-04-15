@@ -1,22 +1,24 @@
 
-
-var contents = document.getElementById('contentContainer');
-var suggestionsContainer = document.getElementById('suggestionsContainer');
-var autoCompleteContainer = document.getElementById('autocompleteContainer');
-var searchInputField = document.getElementById('searchInput');
-var searchBarContainer = document.getElementById('searchBarContainer');
-var searchBtn = document.getElementById('searchButton');
+//--------------------------------------------------------------------------------------
+const contents = document.getElementById('contentContainer');
+const suggestionsContainer = document.getElementById('suggestionsContainer');
+const autoCompleteContainer = document.getElementById('autocompleteContainer');
+const searchInputField = document.getElementById('searchInput');
+const searchBarContainer = document.getElementById('searchBarContainer');
+const searchBtn = document.getElementById('searchButton');
 let wallpaperDiv = document.getElementById("wallpaperImage");
+//--------------------------------------------------------------------------------------
 
 let selectedItemContainer = document.getElementById("selectedItemContainer");
 let selectedItemBackground = document.getElementById("outsideSelectedItem");
 let selectedItemImage = document.getElementById("selectedItem");
-
+//--------------------------------------------------------------------------------------
 const contentLoadingCount= 30;
-const scrollingPercentage = 0.5;
+const scrollingPercentage = 0.5; //at what percentage from the scroll bar to load the next images
 let timeoutID_scroll, timeoutID_fetchData, timeoutID_notScrollable;
 let timeoutMS = 300;
 let loadedImagesCount = 0;
+//--------------------------------------------------------------------------------------
 
 initialize();
 
@@ -26,7 +28,7 @@ initialize();
 function initialize(){
 
     //load wallpaper
-    getWallpaper({type:"random"}, (error, result)=> {
+    logic.getWallpaper({type:"random"}, (error, result)=> {
         wallpaperDiv.style.background = `url(${result.url})`
     });
 
@@ -39,29 +41,32 @@ function initialize(){
         let fetchContent = ()=> {
             loadedImagesCount += contentLoadingCount;
             let  startingIndex = loadedImagesCount;
-            getSearch({q: searchInputField.value, count: contentLoadingCount, start: startingIndex }, loadToHtml )
+            logic.getSearch({q: searchInputField.value, count: contentLoadingCount, start: startingIndex }, loadToHtml )
         };
 
-        onScrollerAt(contents, scrollingPercentage, () => {
-            timeoutID_scroll = runOnceDelay( timeoutID_scroll,timeoutMS,fetchContent);
+        logic.onScrollerAt(contents, scrollingPercentage, () => {
+            timeoutID_scroll = logic.runOnceDelay( timeoutID_scroll,timeoutMS,fetchContent);
         });
 
     });
 
+    //set the search button click event
     searchBtn.addEventListener('click', () => {
         // loadData(searchInputField.value);
-        timeoutID_fetchData =  runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
+        timeoutID_fetchData =  logic.runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
 
     });
 
+    //set the search bar text change behaviour
     searchInputField.addEventListener('input', () => {
-        timeoutID_fetchData = runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
+        timeoutID_fetchData = logic.runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
 
     });
 
-    loadContentIfNotScrollable()
+    //load images if no scroll bar is showing
+    loadContentIfNotScrollable();
 
-
+    //when an image is selected - press outside it to close it
     selectedItemBackground.onclick = ()=>{
         selectedItemContainer.classList.toggle("hidden",true)
     }
@@ -69,35 +74,39 @@ function initialize(){
 }
 
 
-
+//--------------------------------------------------------------------------------------
 function loadData(str) {
 
 
     //hide container if the search-bar input is empty
-    contents.classList.toggle("hideContent", !str || str === "")
+    contents.classList.toggle("hideContent", !str || str === "");
 
     //hide wallpaper if the search-bar input is empty
     wallpaperDiv.classList.toggle("wallpaperHidden", str && str !== "");
 
     //expand search-bar if the input is not empty
-    searchBarContainer.classList.toggle("searchBarContainer_withInput", str && str !== "")
+    searchBarContainer.classList.toggle("searchBarContainer_withInput", str && str !== "");
 
-
+    //reset the elements count
     loadedImagesCount = 0;
 
+    //load suggestions
+    logic.getSuggestions({q: str}, (err, resp) => {
+        loadSuggestionsToHTML(resp, suggestionsContainer)
+    });
 
-    getSearch({q: str, count: contentLoadingCount}, (err, resp) => {
+    //load auto-complete options
+    logic.getAutocomplete({q: str}, (err, resp) => {
+        loadAutocompleteToHTML(resp, autoCompleteContainer)
+    });
+
+
+    //load content
+    logic.getSearch({q: str, count: contentLoadingCount}, (err, resp) => {
         loadContentToHtml(resp, contents);
 
     });
 
-    getSuggestions({q: str}, (err, resp) => {
-        loadSuggestionsToHTML(resp, suggestionsContainer)
-    });
-
-    getAutocomplete({q: str}, (err, resp) => {
-        loadAutocompleteToHTML(resp, autoCompleteContainer)
-    });
 
 
 }
@@ -105,13 +114,18 @@ function loadContentToHtml(dataToLoad, container,isAppend = false){
    if(!isAppend)
        container.innerHTML="";
 
+   //a json array
     dataToLoad.forEach(obj => {
 
        let gif = document.createElement('div');
         gif.innerHTML= `<img src="${obj["preview_gif"].url}">`;
         gif.classList.add("contentElement");
         gif.onclick = ()=>{
+
+            //enlarge the selected image if pressed
             selectedItemContainer.classList.toggle("hidden",false);
+
+            //set the enlatged image
             selectedItemImage.style.background= `url(${obj["original"].url})`;
 
             //set the enlatged image size
@@ -131,84 +145,62 @@ function loadContentToHtml(dataToLoad, container,isAppend = false){
     });
 
 }
-function loadSuggestionsToHTML(dataToLoad, container){
-    container.innerHTML="";
+function loadSuggestionsToHTML(dataToLoad, container) {
+    container.innerHTML = "";
 
-    if(dataToLoad && dataToLoad.length !== 0)
-        dataToLoad.forEach(obj => {
+    //a json array
+    dataToLoad.forEach(obj => {
 
-            let bubble = document.createElement('span');
-            bubble.textContent= obj;
-            bubble.onclick = ()=>{
-                searchInputField.value= obj;
-                loadData(obj)
+        let bubble = document.createElement('span');
+        bubble.textContent = obj;
+        bubble.onclick = () => {
+            //load the suggestion into the search bar
+            searchInputField.value = obj;
+            loadData(obj)
 
-            };
+        };
 
-            bubble.classList.add("suggestionBubble");
-            container.appendChild(bubble);
-        });
+
+        bubble.classList.add("suggestionBubble");
+        container.appendChild(bubble);
+    });
 }
 function loadAutocompleteToHTML(dataToLoad, container){
     container.innerHTML="";
 
+    //a json array
     dataToLoad.forEach(obj => {
-
         let option = document.createElement('option');
         option.value= obj;
 
         container.appendChild(option);
     });
 }
+function loadContentIfNotScrollable() {
+    setInterval(() => {
 
-function loadContentIfNotScrollable(){
-    setInterval(()=> {
-
-        if(!isScrollable(contents)) {
+        if (!logic.isScrollable(contents)) {
 
             let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
 
             let fetchContent = () => {
                 loadedImagesCount += contentLoadingCount;
-               let  startingIndex = loadedImagesCount;
+                let startingIndex = loadedImagesCount;
 
-                getSearch({
+                logic.getSearch({
                     q: searchInputField.value,
                     count: contentLoadingCount,
                     start: startingIndex
                 }, loadToHtml)
             };
 
-            timeoutID_notScrollable = runOnceDelay(timeoutID_notScrollable, 0, fetchContent);
+            timeoutID_notScrollable = logic.runOnceDelay(timeoutID_notScrollable, 0, fetchContent);
         }
 
-    } , 300)
+    }, 300)
 
 }
 
 
-function onScrollerAt(scrollingDiv, posPercentage, cb) {
 
-        // document bottom
-    let height = scrollingDiv.clientHeight;
-    let scrollableAreaSize= scrollingDiv.scrollHeight;
-    let scrollTop = scrollingDiv.scrollTop ;
-
-    if((height + scrollTop ) >= scrollableAreaSize*posPercentage ){
-        cb()
-    }
-
-}
-function runOnceDelay(timeoutID, timeoutMS, cb) {
-
-    clearTimeout(timeoutID);
-    return  setTimeout(cb, timeoutMS)
-}
-function isScrollable(div) {
-    let height = div.clientHeight;
-    let scrollableAreaSize= div.scrollHeight;
-
-    return height < scrollableAreaSize;
-
-
-}
+//--------------------------------------------------------------------------------------
