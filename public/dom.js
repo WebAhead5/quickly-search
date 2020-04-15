@@ -34,7 +34,7 @@ getWallpaper({type:"random"}, (error, result)=> {
 function loadData(str){
     //hide container if empty
     contents.classList.toggle("hidden",!str || str ==="")
-    searchBarContainer.classList.toggle("searchBarWithInput",str && str !=="")
+    searchBarContainer.classList.toggle("searchBarContainer_withInput",str && str !=="")
     wallpaperDiv.classList.toggle("wallpaperHidden",str && str !=="");
 
 
