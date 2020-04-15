@@ -124,6 +124,7 @@ function getTrending(request,response){
 
 function getParamsFromRequest(request){
     let search = url.parse(request.url).query;
+
     return  querystring.parse(search);
 }
 function fetchImagesFromGiphyRequest(request,response,apiRequestLink,params = {} ) {
@@ -145,12 +146,13 @@ function fetchImagesFromGiphyRequest(request,response,apiRequestLink,params = {}
 function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {} ) {
 
     fetchFromApi(apiRequestLink ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
-        if (error) {
-            badRequest(request, response)
-        }
+
+        response.writeHead(200, {"content-type": "application/json"});
+
+        if (error) response.end("[]");
+
         else {
             let resultArr = Array.from(res.data.data).map(x=>x.name);
-            response.writeHead(200, {"content-type": "application/json"});
             response.end(JSON.stringify(resultArr))
         }
 
