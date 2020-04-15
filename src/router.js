@@ -17,7 +17,7 @@ function router (request,response) {
 
 
     else if(request.method === "GET"){
-               if(pathname === "/autocomplete")
+             if(pathname === "/autocomplete")
             handlers.getAutoComplete(request,response);
         else if(pathname === "/suggestions")
             handlers.getSuggestions(request,response);
@@ -25,6 +25,8 @@ function router (request,response) {
             handlers.getSearch(request,response);
         else if(pathname === "/trending")
             handlers.getTrending(request,response);
+        else if(pathname === '/wallpaper')
+            handlers.getWallpaper(request, response);
 
     }
 
