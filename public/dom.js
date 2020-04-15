@@ -13,7 +13,7 @@ let selectedItemContainer = document.getElementById("selectedItemContainer");
 let selectedItemBackground = document.getElementById("outsideSelectedItem");
 let selectedItemImage = document.getElementById("selectedItem");
 //--------------------------------------------------------------------------------------
-const contentLoadingCount= 5;
+const contentLoadingCount= 20;
 const scrollingPercentage = 0.5; //at what percentage from the scroll bar to load the next images
 let timeoutID_scroll, timeoutID_fetchData, timeoutID_notScrollable;
 let timeoutMS = 300;
@@ -63,8 +63,7 @@ function initialize(){
 
     });
 
-    //load images if no scroll bar is showing
-    loadContentIfNotScrollable();
+
 
     //when an image is selected - press outside it to close it
     selectedItemBackground.onclick = ()=>{
@@ -143,7 +142,8 @@ function loadContentToHtml(dataToLoad, container,isAppend = false){
 
         container.appendChild(gif);
     });
-
+    //load images if no scroll bar is showing
+    loadContentIfNotScrollable();
 }
 function loadSuggestionsToHTML(dataToLoad, container) {
     container.innerHTML = "";
@@ -177,31 +177,25 @@ function loadAutocompleteToHTML(dataToLoad, container){
     });
 }
 function loadContentIfNotScrollable() {
-    let id = setInterval(() => {
-        if (searchInputField.value)
-            if (!logic.isScrollable(contents)) {
-
-                let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
-
-                let fetchContent = () => {
-                    loadedImagesCount += contentLoadingCount;
-                    let startingIndex = loadedImagesCount;
-
-                    logic.getSearch({
-                        q: searchInputField.value,
-                        count: contentLoadingCount,
-                        start: startingIndex
-                    }, loadToHtml)
-                };
-
-                timeoutID_notScrollable = logic.runOnceDelay(timeoutID_notScrollable, 0, fetchContent);
-            } else clearInterval(id);
 
 
-    }, 150)
+    if (!logic.isScrollable(contents) && searchInputField.value ) {
 
+        let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
+
+        let fetchContent = () => {
+            loadedImagesCount += contentLoadingCount;
+            let startIndex = loadedImagesCount;
+            logic.getSearch({
+                q: searchInputField.value,
+                count: contentLoadingCount,
+                start: startIndex
+            }, loadToHtml)
+        };
+
+        timeoutID_notScrollable = logic.runOnceDelay(timeoutID_notScrollable, 30, fetchContent);
+    }
 }
-
 
 
 //--------------------------------------------------------------------------------------
