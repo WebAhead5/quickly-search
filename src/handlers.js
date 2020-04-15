@@ -122,8 +122,7 @@ function getTrending(request,response){
 
 function getWallpaper(request, response) {
     let params = getParamsFromRequest(request)
-    console.log("the params are: ", JSON.stringify(params))
-    let imagesIndex = 0
+    let imagesIndex = 1
     if(params.type === 'random'){
         imagesIndex = Math.floor(Math.random() * 8)
     }

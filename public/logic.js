@@ -14,12 +14,17 @@ function getTrending (params, cb) {
     fetchFromAPI(params, '/tranding', cb)
 }
 
+function getWallpaper (params, cb) {
+    fetchFromAPI(params, '/wallpaper', cb)
+}
+
 function fetchFromAPI (params, path, cb) {
     let queryParams = Object.keys(params).map((p)=> `${p}=${encodeURI(params[p].toString())}`)
     queryParams = queryParams.join('&')
-    fetch(`${path}?${(queryParams)}`)
+    let urlWithParams = `${path}${Object.keys(params).length ==0? "": "?"}${(queryParams)}`
+    fetch(urlWithParams)
         .then(res => res.json())
-        .then(jsonObj => cb(null, Array.from(jsonObj)))
+        .then(jsonObj => cb(null, jsonObj))
         .catch(e=> cb(e))
 }
 
