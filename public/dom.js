@@ -69,19 +69,20 @@ function loadContentIntoHtml(dataToLoad, container){
     });
 }
 function loadSuggestionsIntoHtml(dataToLoad, container){
-    dataToLoad.forEach(obj => {
+    if(dataToLoad && dataToLoad.length !== 0)
+        dataToLoad.forEach(obj => {
 
-        let bubble = document.createElement('span');
-        bubble.textContent= obj;
-        bubble.onclick = ()=>{
-            searchInputField.value= obj;
-            loadData(obj)
+            let bubble = document.createElement('span');
+            bubble.textContent= obj;
+            bubble.onclick = ()=>{
+                searchInputField.value= obj;
+                loadData(obj)
 
-        };
+            };
 
-        bubble.classList.add("suggestionBubble");
-        container.appendChild(bubble);
-    });
+            bubble.classList.add("suggestionBubble");
+            container.appendChild(bubble);
+        });
 }
 function loadAutocompleteIntoHtml(dataToLoad, container){
     dataToLoad.forEach(obj => {
