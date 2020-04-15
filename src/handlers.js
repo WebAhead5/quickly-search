@@ -195,7 +195,8 @@ function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {},a
 
         else {
             let resultArr = Array.from(res.data.data).map(x=>x.name);
-            resultArr.unshift(params.q);
+            if(addSearchToResult)
+                resultArr.unshift(params.q);
             response.end(JSON.stringify(resultArr))
         }
 
