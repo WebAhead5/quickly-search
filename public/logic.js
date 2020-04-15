@@ -22,6 +22,7 @@ const logic = {
         function (params, cb) {
             logic.fetchJsonFromBackend(params, '/wallpaper', cb)
         },
+
     fetchJsonFromBackend:
         /***
          * makes a get request to the provided url with params, and calls the callback on result/error.
@@ -40,8 +41,7 @@ const logic = {
         },
 
 
-    //in not being used anymore
-    onScrollerAt:
+    onScrollerAt:     //in not being used anymore
         /***
          * calls the callback the the user passes a certain percentage of it.
          * @param {HTMLElement} scrollingDiv - the div with a scroll bar
@@ -89,6 +89,7 @@ const logic = {
             clearTimeout(timeoutID);
             return setTimeout(cb, timeoutMS)
         },
+
     isScrollable:
         /***
          * returns true of the div can scroll (holds overflowing items).
@@ -100,6 +101,22 @@ const logic = {
             let scrollableAreaSize = div.scrollHeight;
             return height < scrollableAreaSize;
 
+        },
+
+    /***
+     * remove all special characters from a string (keeps only letters and numbers)
+     * @param {string} str - string to filter
+     * @return {string} - filtered string
+     */
+    filterInput:
+        function(str){
+            if(!str) return "";
+
+           let arr = str.match(/[a-zA-Z0-9]/gi);
+            if(!arr) return "";
+
+            return arr.join("");
         }
+
 
 }
