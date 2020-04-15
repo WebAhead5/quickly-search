@@ -7,68 +7,95 @@ var searchInputField = document.getElementById('searchInput');
 var searchBarContainer = document.getElementById('searchBarContainer');
 var searchBtn = document.getElementById('searchButton');
 let wallpaperDiv = document.getElementById("wallpaperImage");
+const contentLoadingCount= 60;
+const scrollingPercentage = 0.66;
 
 
-//on click search button
-searchBtn.addEventListener('click', () => {
-    loadData(searchInputField.value);
-});
-//if mousedown is the return button
-searchInputField.addEventListener('input', () => {
-    loadData(searchInputField.value);
-
-});
-
-searchInputField.addEventListener('change', () => {
-
-
-});
+initialize();
 
 
 
-getWallpaper({type:"random"}, (error, result)=> {
-    wallpaperDiv.style.background = `url(${result.url})`
-});
 
+function initialize(){
+
+    //load wallpaper
+    getWallpaper({type:"random"}, (error, result)=> {
+        wallpaperDiv.style.background = `url(${result.url})`
+    });
+
+
+    //set content scroll behaviour
+    contents.onscroll = ()=>
+        onScrollerAt(contents,scrollingPercentage, ()=> {
+
+            getSearch({q: searchInputField.value, count:contentLoadingCount, startIndex: searchInputField.childElementCount}, (err,resp) => {
+                loadContentToHtml(resp,contents,true);
+            });
+        })
+
+
+    searchBtn.addEventListener('click', () => {
+        loadData(searchInputField.value);
+    });
+
+    searchInputField.addEventListener('input', () => {
+        loadData(searchInputField.value);
+
+    });
+
+    searchInputField.addEventListener('change', () => {
+
+
+    });
+
+
+}
 
 function loadData(str){
-    //hide container if empty
+
+    //hide container if the search-bar input is empty
     contents.classList.toggle("hidden",!str || str ==="")
-    searchBarContainer.classList.toggle("searchBarContainer_withInput",str && str !=="")
+
+    //hide wallpaper if the search-bar input is empty
     wallpaperDiv.classList.toggle("wallpaperHidden",str && str !=="");
 
+    //expand search-bar if the input is not empty
+    searchBarContainer.classList.toggle("searchBarContainer_withInput",str && str !=="")
 
-    getSearch({q: str}, (err,resp) => {
-        contents.innerHTML="";
-        loadContentIntoHtml(resp,contents)
+
+
+    getSearch({q: str, count:contentLoadingCount}, (err,resp) => {
+        loadContentToHtml(resp,contents);
+
     });
 
     getSuggestions({q: str}, (err,resp) => {
-        suggestionsContainer.innerHTML="";
-        loadSuggestionsIntoHtml(resp,suggestionsContainer)
+        loadSuggestionsToHTML(resp,suggestionsContainer)
     });
 
     getAutocomplete({q:str},(err,resp)=> {
-        autoCompleteContainer.innerHTML="";
-        loadAutocompleteIntoHtml(resp,autoCompleteContainer)
+        loadAutocompleteToHTML(resp,autoCompleteContainer)
     });
 
 
 
 }
-
-
-function loadContentIntoHtml(dataToLoad, container){
-
+function loadContentToHtml(dataToLoad, container,isAppend){
+   if(!isAppend)
+        container.innerHTML="";
     dataToLoad.forEach(obj => {
 
        let gify = document.createElement('div');
         gify.innerHTML= `<img src="${obj["preview_gif"].url}">`;
-        gify.classList.add("contentElement")
+        gify.classList.add("contentElement");
+
         container.appendChild(gify);
     });
+
 }
-function loadSuggestionsIntoHtml(dataToLoad, container){
+function loadSuggestionsToHTML(dataToLoad, container){
+    container.innerHTML="";
+
     if(dataToLoad && dataToLoad.length !== 0)
         dataToLoad.forEach(obj => {
 
@@ -84,7 +111,9 @@ function loadSuggestionsIntoHtml(dataToLoad, container){
             container.appendChild(bubble);
         });
 }
-function loadAutocompleteIntoHtml(dataToLoad, container){
+function loadAutocompleteToHTML(dataToLoad, container){
+    container.innerHTML="";
+
     dataToLoad.forEach(obj => {
 
         let option = document.createElement('option');
@@ -92,4 +121,16 @@ function loadAutocompleteIntoHtml(dataToLoad, container){
 
         container.appendChild(option);
     });
+}
+
+function onScrollerAt(scrollingDiv, posPercentage, cb) {
+
+        // document bottom
+    let height = scrollingDiv.clientHeight;
+    let viewHeight= scrollingDiv.scrollHeight;
+    let scrollTop = scrollingDiv.scrollTop ;
+    if((height + scrollTop ) > viewHeight*.66 ){
+        cb()
+    }
+
 }
