@@ -13,7 +13,7 @@ let selectedItemContainer = document.getElementById("selectedItemContainer");
 let selectedItemBackground = document.getElementById("outsideSelectedItem");
 let selectedItemImage = document.getElementById("selectedItem");
 //--------------------------------------------------------------------------------------
-const contentLoadingCount= 30;
+const contentLoadingCount= 5;
 const scrollingPercentage = 0.5; //at what percentage from the scroll bar to load the next images
 let timeoutID_scroll, timeoutID_fetchData, timeoutID_notScrollable;
 let timeoutMS = 300;
@@ -177,27 +177,28 @@ function loadAutocompleteToHTML(dataToLoad, container){
     });
 }
 function loadContentIfNotScrollable() {
-    setInterval(() => {
+    let id = setInterval(() => {
+        if (searchInputField.value)
+            if (!logic.isScrollable(contents)) {
 
-        if (!logic.isScrollable(contents)) {
+                let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
 
-            let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
+                let fetchContent = () => {
+                    loadedImagesCount += contentLoadingCount;
+                    let startingIndex = loadedImagesCount;
 
-            let fetchContent = () => {
-                loadedImagesCount += contentLoadingCount;
-                let startingIndex = loadedImagesCount;
+                    logic.getSearch({
+                        q: searchInputField.value,
+                        count: contentLoadingCount,
+                        start: startingIndex
+                    }, loadToHtml)
+                };
 
-                logic.getSearch({
-                    q: searchInputField.value,
-                    count: contentLoadingCount,
-                    start: startingIndex
-                }, loadToHtml)
-            };
+                timeoutID_notScrollable = logic.runOnceDelay(timeoutID_notScrollable, 0, fetchContent);
+            } else clearInterval(id);
 
-            timeoutID_notScrollable = logic.runOnceDelay(timeoutID_notScrollable, 0, fetchContent);
-        }
 
-    }, 300)
+    }, 150)
 
 }
 
