@@ -5,6 +5,7 @@ const suggestionsContainer = document.getElementById('suggestionsContainer');
 const autoCompleteContainer = document.getElementById('autocompleteContainer');
 const searchInputField = document.getElementById('searchInput');
 const searchBarContainer = document.getElementById('searchBarContainer');
+const searchAndSuggestionsContainer = document.getElementById('searchAndSuggestions');
 const searchBtn = document.getElementById('searchButton');
 let wallpaperDiv = document.getElementById("wallpaperImage");
 //--------------------------------------------------------------------------------------
@@ -86,6 +87,7 @@ function loadData(str) {
 
     //expand search-bar if the input is not empty
     searchBarContainer.classList.toggle("searchBarContainer_withInput", str && str !== "");
+    searchAndSuggestionsContainer.classList.toggle("searchAndSuggestions_withInput", str && str !== "");
 
     //reset the elements count
     loadedImagesCount = 0;
