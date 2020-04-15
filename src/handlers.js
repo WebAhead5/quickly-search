@@ -78,7 +78,7 @@ function badRequest(request, response) {
  */
 function getAutoComplete(request, response) {
     let params = getParamsFromRequest(request);
-    fetchTextFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q: params.q})
+    fetchTextFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q: params.q},true)
 }
 
 
@@ -160,7 +160,7 @@ function fetchImagesFromGiphyRequest(request,response,apiRequestLink,params = {}
     })
 
 }
-function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {} ) {
+function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {},addSearchToResult = false ) {
 
     fetchFromApi(apiRequestLink ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
 
@@ -170,6 +170,7 @@ function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {} )
 
         else {
             let resultArr = Array.from(res.data.data).map(x=>x.name);
+            resultArr.unshift(params.q);
             response.end(JSON.stringify(resultArr))
         }
 
