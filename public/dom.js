@@ -113,11 +113,18 @@ function loadContentToHtml(dataToLoad, container,isAppend = false){
         gif.onclick = ()=>{
             selectedItemContainer.classList.toggle("hidden",false);
             selectedItemImage.style.background= `url(${obj["original"].url})`;
-           let aspectRatio=  obj["original"].width /   obj["original"].height;
-            let max = Math.max(obj["original"].width ,   obj["original"].height);
-            // let other =
-            selectedItemImage.style.width = `${max * 200}px`;
-            selectedItemImage.style.height = `${aspectRatio * 200}px`;
+
+            //set the enlatged image size
+            let width = obj["original"].width;
+            let height = obj["original"].height;
+            let max = Math.max(width ,  height);
+            let min = Math.min(width ,  height);
+            let calc = "min(80vh,80vw)";
+            selectedItemImage.style.width = calc;
+            selectedItemImage.style.height = `calc(${(min / max)} * ${calc})`;
+
+
+
         };
 
         container.appendChild(gif);
