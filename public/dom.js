@@ -36,19 +36,19 @@ function initialize(){
         };
 
         onScrollerAt(contents, scrollingPercentage, () => {
-            timeoutID_scroll = loadOnceDelay( timeoutID_scroll,fetchContent);
+            timeoutID_scroll = runOnceDelay( timeoutID_scroll,timeoutMS,fetchContent);
         });
 
     });
 
     searchBtn.addEventListener('click', () => {
         // loadData(searchInputField.value);
-        timeoutID_fetchData =  loadOnceDelay(timeoutID_fetchData,()=> loadData(searchInputField.value) );
+        timeoutID_fetchData =  runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
 
     });
 
     searchInputField.addEventListener('input', () => {
-        timeoutID_fetchData = loadOnceDelay(timeoutID_fetchData,()=> loadData(searchInputField.value) );
+        timeoutID_fetchData = runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
 
     });
 
@@ -141,7 +141,7 @@ function onScrollerAt(scrollingDiv, posPercentage, cb) {
     }
 
 }
-function loadOnceDelay(timeoutID,cb) {
+function runOnceDelay(timeoutID, timeoutMS, cb) {
 
     clearTimeout(timeoutID);
     return  setTimeout(cb, timeoutMS)
