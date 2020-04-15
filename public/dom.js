@@ -7,9 +7,12 @@ var searchInputField = document.getElementById('searchInput');
 var searchBarContainer = document.getElementById('searchBarContainer');
 var searchBtn = document.getElementById('searchButton');
 let wallpaperDiv = document.getElementById("wallpaperImage");
-const contentLoadingCount= 60;
-const scrollingPercentage = 0.66;
 
+const contentLoadingCount= 10;
+const scrollingPercentage = 0.66;
+let timeoutID_scroll, timeoutID_fetchData, timeoutID_notScrollable;
+let timeoutMS = 300;
+let loadedImagesCount = 0;
 
 initialize();
 
@@ -27,66 +30,73 @@ function initialize(){
     //set content scroll behaviour
     contents.addEventListener("scroll", ()=> {
 
-        onScrollerAt(contents, scrollingPercentage, () => {
-            console.log( "loading")
-                getSearch({
-                        q: searchInputField.value,
-                        count: contentLoadingCount,
-                        start: searchInputField.childElementCount },
+        let loadToHtml = (err, dataToLoad) => loadContentToHtml(dataToLoad, contents, true);
 
-                    (err, resp) => { loadContentToHtml(resp, contents, true);});
+        let fetchContent = ()=> {
+            loadedImagesCount += contentLoadingCount;
+            let  startingIndex = loadedImagesCount;
+            getSearch({q: searchInputField.value, count: contentLoadingCount, start: startingIndex }, loadToHtml )
+        };
+
+        onScrollerAt(contents, scrollingPercentage, () => {
+            timeoutID_scroll = runOnceDelay( timeoutID_scroll,timeoutMS,fetchContent);
         });
+
     });
 
     searchBtn.addEventListener('click', () => {
-        loadData(searchInputField.value);
+        // loadData(searchInputField.value);
+        timeoutID_fetchData =  runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
+
     });
 
     searchInputField.addEventListener('input', () => {
-        loadData(searchInputField.value);
+        timeoutID_fetchData = runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
 
     });
 
-    searchInputField.addEventListener('change', () => {
-
-
-    });
-
+    loadContentIfNotScrollable()
 
 }
 
-function loadData(str){
+
+
+function loadData(str) {
+
 
     //hide container if the search-bar input is empty
-    contents.classList.toggle("hidden",!str || str ==="")
+    contents.classList.toggle("hidden", !str || str === "")
 
     //hide wallpaper if the search-bar input is empty
-    wallpaperDiv.classList.toggle("wallpaperHidden",str && str !=="");
+    wallpaperDiv.classList.toggle("wallpaperHidden", str && str !== "");
 
     //expand search-bar if the input is not empty
-    searchBarContainer.classList.toggle("searchBarContainer_withInput",str && str !=="")
+    searchBarContainer.classList.toggle("searchBarContainer_withInput", str && str !== "")
 
 
+    loadedImagesCount = 0;
 
-    getSearch({q: str, count:contentLoadingCount}, (err,resp) => {
-        loadContentToHtml(resp,contents);
+
+    getSearch({q: str, count: contentLoadingCount}, (err, resp) => {
+        loadContentToHtml(resp, contents);
 
     });
 
-    getSuggestions({q: str}, (err,resp) => {
-        loadSuggestionsToHTML(resp,suggestionsContainer)
+    getSuggestions({q: str}, (err, resp) => {
+        loadSuggestionsToHTML(resp, suggestionsContainer)
     });
 
-    getAutocomplete({q:str},(err,resp)=> {
-        loadAutocompleteToHTML(resp,autoCompleteContainer)
+    getAutocomplete({q: str}, (err, resp) => {
+        loadAutocompleteToHTML(resp, autoCompleteContainer)
     });
-
 
 
 }
-function loadContentToHtml(dataToLoad, container,isAppend){
+function loadContentToHtml(dataToLoad, container,isAppend = false){
    if(!isAppend)
-        container.innerHTML="";
+       container.innerHTML="";
+
+
     dataToLoad.forEach(obj => {
 
        let gify = document.createElement('div');
@@ -127,14 +137,54 @@ function loadAutocompleteToHTML(dataToLoad, container){
     });
 }
 
+function loadContentIfNotScrollable(){
+    setInterval(()=> {
+
+        if(!isScrollable(contents)) {
+
+            let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
+
+            let fetchContent = () => {
+                loadedImagesCount += contentLoadingCount;
+               let  startingIndex = loadedImagesCount;
+
+                getSearch({
+                    q: searchInputField.value,
+                    count: contentLoadingCount,
+                    start: startingIndex
+                }, loadToHtml)
+            };
+
+            timeoutID_notScrollable = runOnceDelay(timeoutID_notScrollable, 0, fetchContent);
+        }
+
+    } , 300)
+
+}
+
+
 function onScrollerAt(scrollingDiv, posPercentage, cb) {
 
         // document bottom
     let height = scrollingDiv.clientHeight;
-    let viewHeight= scrollingDiv.scrollHeight;
+    let scrollableAreaSize= scrollingDiv.scrollHeight;
     let scrollTop = scrollingDiv.scrollTop ;
-    if((height + scrollTop ) > viewHeight*.66 ){
+
+    if((height + scrollTop ) >= scrollableAreaSize*posPercentage ){
         cb()
     }
+
+}
+function runOnceDelay(timeoutID, timeoutMS, cb) {
+
+    clearTimeout(timeoutID);
+    return  setTimeout(cb, timeoutMS)
+}
+function isScrollable(div) {
+    let height = div.clientHeight;
+    let scrollableAreaSize= div.scrollHeight;
+
+    return height < scrollableAreaSize;
+
 
 }
