@@ -25,14 +25,18 @@ function initialize(){
 
 
     //set content scroll behaviour
-    contents.onscroll = ()=>
-        onScrollerAt(contents,scrollingPercentage, ()=> {
+    contents.addEventListener("scroll", ()=> {
 
-            getSearch({q: searchInputField.value, count:contentLoadingCount, startIndex: searchInputField.childElementCount}, (err,resp) => {
-                loadContentToHtml(resp,contents,true);
-            });
-        })
+        onScrollerAt(contents, scrollingPercentage, () => {
+            console.log( "loading")
+                getSearch({
+                        q: searchInputField.value,
+                        count: contentLoadingCount,
+                        start: searchInputField.childElementCount },
 
+                    (err, resp) => { loadContentToHtml(resp, contents, true);});
+        });
+    });
 
     searchBtn.addEventListener('click', () => {
         loadData(searchInputField.value);
