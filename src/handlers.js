@@ -184,8 +184,9 @@ function fetchImagesFromGiphyRequest(request,response,apiRequestURL,params = {} 
  * @param response
  * @param apiRequestURL - Giphy api url
  * @param params - the params to add to the url other than the API_KEY
+ * @param addSearchToResult - if true adds the search query to the results
  */
-function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {},addSearchToResult = false ) {
+function fetchTextFromGiphyRequest(request,response,apiRequestURL,params = {},addSearchToResult = false ) {
 
     fetchFromApi(apiRequestURL ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
 
