@@ -1,4 +1,4 @@
-
+const dotenv = require('dotenv')
 const url = require("url");
 const axios = require("axios");
 const path = require("path");
@@ -13,7 +13,7 @@ const hostAndPaths = {
     wallpaper: "https://bing.biturl.top/?resolution=1920&format=json"
 };
 
-const api_key_giphy = process.env.API_GIPHY || "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
+const api_key_giphy = process.env.API_GIPHY ;
 
 
 
@@ -60,11 +60,15 @@ function resources(request, response) {
 }
 function notFound(request, response) {
     //error 404
-    response.writeHead(404, { "content-type": "text/html" });
-    response.end("<h1>not found</h1>");
+    fs.readFile(path.join(__dirname, '..', 'public', 'notFound.html'), (error, file) => {
+        response.writeHead(404, { 'content-type' : 'text/html'})
+        response.end(file)
+      })
+    
 }
 function badRequest(request, response) {
     //error 400
+    
     response.writeHead(400, { "content-type": "text/html" });
     response.end("<h1>bad request</h1>");
 }
