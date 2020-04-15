@@ -114,7 +114,7 @@ function getSearch(request,response){
 
     let params = getParamsFromRequest(request);
 
-    fetchImagesFromGiphyRequest(request,response,hostAndPaths.search,{q:params.q ,limit:params.count || 25} )
+    fetchImagesFromGiphyRequest(request,response,hostAndPaths.search,{q:params.q ,limit:params.count || 25, offset: params.start} )
 
 }
 
