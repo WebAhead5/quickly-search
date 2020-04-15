@@ -162,11 +162,12 @@ function loadAutocompleteToHTML(dataToLoad, container){
 }
 function append_notScrollable_and_OnScroll() {
 
-    let isNotScrollableAndTextNotEmpty = !logic.isScrollable(contents) && searchInputField.value;
+    let searchFieldNotEmpty =  searchInputField.value;
+    let notEnoughContentToScroll = !logic.isScrollable(contents) ;
     let scrollerPassedMarker = logic.isScrollerPast(contents, scrollingPercentage)
 
-    if (canLoadContent)
-        if (isNotScrollableAndTextNotEmpty || scrollerPassedMarker) {
+    if (canLoadContent && searchFieldNotEmpty)
+        if (notEnoughContentToScroll || scrollerPassedMarker) {
 
             //a callback to load the data to the html
             let loadToHtml = function(err, jsonObj) {
