@@ -6,6 +6,7 @@ var autoCompleteContainer = document.getElementById('autocompleteContainer');
 var searchInputField = document.getElementById('searchInput');
 var searchBarContainer = document.getElementById('searchBarContainer');
 var searchBtn = document.getElementById('searchButton');
+let wallpaperDiv = document.getElementById("wallpaperImage");
 
 
 //on click search button
@@ -14,8 +15,7 @@ searchBtn.addEventListener('click', () => {
 });
 //if mousedown is the return button
 searchInputField.addEventListener('input', () => {
-    let str =searchInputField.value;
-    setTimeout(loadData(str), 500)
+    loadData(searchInputField.value);
 
 });
 
@@ -26,10 +26,16 @@ searchInputField.addEventListener('change', () => {
 
 
 
+getWallpaper({type:"random"}, (error, result)=> {
+    wallpaperDiv.style.background = `url(${result.url})`
+});
+
+
 function loadData(str){
     //hide container if empty
     contents.classList.toggle("hidden",!str || str ==="")
     searchBarContainer.classList.toggle("searchBarWithInput",str && str !=="")
+    wallpaperDiv.classList.toggle("wallpaperHidden",str && str !=="");
 
 
     getSearch({q: str}, (err,resp) => {
@@ -46,6 +52,8 @@ function loadData(str){
         autoCompleteContainer.innerHTML="";
         loadAutocompleteIntoHtml(resp,autoCompleteContainer)
     });
+
+
 
 }
 

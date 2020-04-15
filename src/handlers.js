@@ -10,6 +10,7 @@ const hostAndPaths = {
     suggestions: "https://api.giphy.com/v1/tags/related/",
     trending: "https://api.giphy.com/v1/gifs/trending",
     random: "https://api.giphy.com/v1/gifs/trending",
+    wallpaper: "https://bing.biturl.top/?resolution=1920&format=json"
 };
 
 const api_key_giphy = process.env.API_GIPHY || "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
@@ -119,6 +120,22 @@ function getTrending(request,response){
 
 }
 
+function getWallpaper(request, response) {
+    let params = getParamsFromRequest(request)
+    let imagesIndex = 1
+    if(params.type === 'random'){
+        imagesIndex = Math.floor(Math.random() * 8)
+    }
+    fetchFromApi(hostAndPaths.wallpaper, {index: imagesIndex}, (error, result)=> {
+        if (error) {
+            badRequest(request, response)
+        } else {
+            response.writeHead(200, {'content-type': 'application/json'})
+            response.end(JSON.stringify(result.data))
+        }
+    })
+}
+
 
 
 
@@ -179,5 +196,5 @@ function fetchFromApi(apiUrl, params = {}, cb) {
 
 
 
-module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch , getTrending}
+module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch , getTrending, getWallpaper}
 
