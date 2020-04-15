@@ -40,6 +40,7 @@ const logic = {
         },
 
 
+    //in not being used anymore
     onScrollerAt:
         /***
          * calls the callback the the user passes a certain percentage of it.
@@ -54,11 +55,27 @@ const logic = {
             let scrollableAreaSize = scrollingDiv.scrollHeight;
             let scrollTop = scrollingDiv.scrollTop;
 
-            if ((height + scrollTop) >= scrollableAreaSize * posPercentage) {
+            if ((height + scrollTop) >= scrollableAreaSize * posPercentage * .99) {
                 cb()
             }
 
         },
+
+    /***
+     * @param {HTMLElement} scrollingDiv - a scrollable element
+     * @param {number} posPercentage - a number between 0 and 1 indicating a percentage
+     * @return {boolean} returns true of the scroller passed the provided percent (example return true if the scroller passes 50% or 0.5).
+     */
+    isScrollerPast:
+        function(scrollingDiv, posPercentage){
+            // document bottom
+            let height = scrollingDiv.clientHeight;
+            let scrollableAreaSize = scrollingDiv.scrollHeight;
+            let scrollTop = scrollingDiv.scrollTop;
+
+            return (height + scrollTop) >= scrollableAreaSize * posPercentage * 0.999;
+    },
+
     runOnceDelay:
         /***
          * wraps a callback function with a setTimeout, and clears the timeout with the provided ID object (timeoutID).
@@ -85,4 +102,4 @@ const logic = {
 
         }
 
-};
+}
