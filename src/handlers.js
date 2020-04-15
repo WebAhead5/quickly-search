@@ -76,7 +76,7 @@ function badRequest(request, response) {
  */
 function getAutoComplete(request, response) {
     let params = getParamsFromRequest(request);
-    fetchTextFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q: params.q})
+    fetchTextFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q: params.q},true)
 }
 
 /***
@@ -177,6 +177,7 @@ function fetchImagesFromGiphyRequest(request,response,apiRequestURL,params = {} 
 
 }
 
+
 /***
  * handles the retrieval of the suggestions and auto-complete options from giphy's api.
  * @param request
@@ -184,7 +185,7 @@ function fetchImagesFromGiphyRequest(request,response,apiRequestURL,params = {} 
  * @param apiRequestURL - Giphy api url
  * @param params - the params to add to the url other than the API_KEY
  */
-function fetchTextFromGiphyRequest(request,response,apiRequestURL,params = {} ) {
+function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {},addSearchToResult = false ) {
 
     fetchFromApi(apiRequestURL ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
 
@@ -194,6 +195,7 @@ function fetchTextFromGiphyRequest(request,response,apiRequestURL,params = {} ) 
 
         else {
             let resultArr = Array.from(res.data.data).map(x=>x.name);
+            resultArr.unshift(params.q);
             response.end(JSON.stringify(resultArr))
         }
 
