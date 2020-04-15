@@ -34,8 +34,8 @@ function home(request, response) {
 }
 function resources(request, response) {
     const url = request.url;
-    const exten = url.split('.')[1];
-    const extenType = {
+    const ext = url.split('.')[1];
+    const extType = {
         html: 'text/html',
         css: 'text/css',
         js: 'application/javascript',
@@ -51,7 +51,7 @@ function resources(request, response) {
         if (error) {
             badRequest(request, response)
         } else {
-            response.writeHead(200, { 'content-type': extenType[exten] });
+            response.writeHead(200, { 'content-type': extType[ext] });
             response.end(file);
         }
     })
@@ -121,8 +121,8 @@ function getTrending(request,response){
 }
 
 function getWallpaper(request, response) {
-    let params = getParamsFromRequest(request)
-    let imagesIndex = 1
+    let params = getParamsFromRequest(request);
+    let imagesIndex = 1;
     if(params.type === 'random'){
         imagesIndex = Math.floor(Math.random() * 8)
     }
@@ -130,7 +130,7 @@ function getWallpaper(request, response) {
         if (error) {
             badRequest(request, response)
         } else {
-            response.writeHead(200, {'content-type': 'application/json'})
+            response.writeHead(200, {'content-type': 'application/json'});
             response.end(JSON.stringify(result.data))
         }
     })
@@ -196,5 +196,5 @@ function fetchFromApi(apiUrl, params = {}, cb) {
 
 
 
-module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch , getTrending, getWallpaper}
+module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch , getTrending, getWallpaper};
 
