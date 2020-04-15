@@ -5,7 +5,7 @@
     --color-page-background : #393652;
     --color-bubble:#67A6C0;
     transition: all 1s;
-
+    outline-style: none;
 }
 
 
@@ -119,7 +119,7 @@ body
 
 
 }
-.contentElement img,contentElement_height_2fr img, contentElement_width_2fr img{
+.contentElement img, .contentElement_height_2fr img, .contentElement_width_2fr img{
     width: 100%;
     height: 100%;
 }
