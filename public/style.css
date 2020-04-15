@@ -8,9 +8,6 @@
 
 }
 
-div{
-    /*background-color: rgba(255,255,255,0.2);*/
-}
 
 body
 {
@@ -36,6 +33,25 @@ body
     flex-direction: column;
     justify-content: center ;
     align-items: center;
+}
+
+#wallpaperImage{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+
+
+    opacity: .6;
+    background-position: center !important;
+    background-size: auto 100% !important;
+    background-repeat: no-repeat !important;
+
+}
+.wallpaperHidden{
+    opacity: 0 !important;
 }
 
 #searchAndSuggestions{
@@ -98,8 +114,6 @@ body
 
 
 }
-
-
 .contentElement img,contentElement_height_2fr img, contentElement_width_2fr img{
     width: 100%;
     height: 100%;
