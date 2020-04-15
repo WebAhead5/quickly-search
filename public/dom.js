@@ -7,8 +7,10 @@ var searchInputField = document.getElementById('searchInput');
 var searchBarContainer = document.getElementById('searchBarContainer');
 var searchBtn = document.getElementById('searchButton');
 let wallpaperDiv = document.getElementById("wallpaperImage");
-const contentLoadingCount= 60;
+const contentLoadingCount= 20;
 const scrollingPercentage = 0.66;
+let timeoutID_scroll, timeoutID_fetchData;
+let timeoutMS = 300;
 
 
 initialize();
@@ -27,64 +29,64 @@ function initialize(){
     //set content scroll behaviour
     contents.addEventListener("scroll", ()=> {
 
-        onScrollerAt(contents, scrollingPercentage, () => {
-            console.log( "loading")
-                getSearch({
-                        q: searchInputField.value,
-                        count: contentLoadingCount,
-                        start: searchInputField.childElementCount },
+        let loadToHtml = (err, resp) => loadContentToHtml(resp, contents, true);
 
-                    (err, resp) => { loadContentToHtml(resp, contents, true);});
+        let fetchContent = ()=> {
+           getSearch({q: searchInputField.value, count: contentLoadingCount, start: contents.childElementCount }, loadToHtml )
+        };
+
+        onScrollerAt(contents, scrollingPercentage, () => {
+            timeoutID_scroll = loadOnceDelay( timeoutID_scroll,fetchContent);
         });
+
     });
 
     searchBtn.addEventListener('click', () => {
-        loadData(searchInputField.value);
+        // loadData(searchInputField.value);
+        timeoutID_fetchData =  loadOnceDelay(timeoutID_fetchData,()=> loadData(searchInputField.value) );
+
     });
 
     searchInputField.addEventListener('input', () => {
-        loadData(searchInputField.value);
+        timeoutID_fetchData = loadOnceDelay(timeoutID_fetchData,()=> loadData(searchInputField.value) );
 
-    });
-
-    searchInputField.addEventListener('change', () => {
-
-
-    });
-
-
-}
-
-function loadData(str){
-
-    //hide container if the search-bar input is empty
-    contents.classList.toggle("hidden",!str || str ==="")
-
-    //hide wallpaper if the search-bar input is empty
-    wallpaperDiv.classList.toggle("wallpaperHidden",str && str !=="");
-
-    //expand search-bar if the input is not empty
-    searchBarContainer.classList.toggle("searchBarContainer_withInput",str && str !=="")
-
-
-
-    getSearch({q: str, count:contentLoadingCount}, (err,resp) => {
-        loadContentToHtml(resp,contents);
-
-    });
-
-    getSuggestions({q: str}, (err,resp) => {
-        loadSuggestionsToHTML(resp,suggestionsContainer)
-    });
-
-    getAutocomplete({q:str},(err,resp)=> {
-        loadAutocompleteToHTML(resp,autoCompleteContainer)
     });
 
 
 
 }
-function loadContentToHtml(dataToLoad, container,isAppend){
+
+
+
+function loadData(str) {
+
+
+        //hide container if the search-bar input is empty
+        contents.classList.toggle("hidden", !str || str === "")
+
+        //hide wallpaper if the search-bar input is empty
+        wallpaperDiv.classList.toggle("wallpaperHidden", str && str !== "");
+
+        //expand search-bar if the input is not empty
+        searchBarContainer.classList.toggle("searchBarContainer_withInput", str && str !== "")
+
+
+        getSearch({q: str, count: contentLoadingCount}, (err, resp) => {
+            loadContentToHtml(resp, contents);
+
+        });
+
+        getSuggestions({q: str}, (err, resp) => {
+            loadSuggestionsToHTML(resp, suggestionsContainer)
+        });
+
+        getAutocomplete({q: str}, (err, resp) => {
+            loadAutocompleteToHTML(resp, autoCompleteContainer)
+        });
+
+
+}
+function loadContentToHtml(dataToLoad, container,isAppend = false){
    if(!isAppend)
         container.innerHTML="";
     dataToLoad.forEach(obj => {
@@ -131,10 +133,16 @@ function onScrollerAt(scrollingDiv, posPercentage, cb) {
 
         // document bottom
     let height = scrollingDiv.clientHeight;
-    let viewHeight= scrollingDiv.scrollHeight;
+    let scrollableAreaSize= scrollingDiv.scrollHeight;
     let scrollTop = scrollingDiv.scrollTop ;
-    if((height + scrollTop ) > viewHeight*.66 ){
+
+    if((height + scrollTop ) >= scrollableAreaSize*posPercentage ){
         cb()
     }
 
+}
+function loadOnceDelay(timeoutID,cb) {
+
+    clearTimeout(timeoutID);
+    return  setTimeout(cb, timeoutMS)
 }
