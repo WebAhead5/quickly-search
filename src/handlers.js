@@ -1,4 +1,4 @@
-
+const dotenv = require('dotenv')
 const url = require("url");
 const axios = require("axios");
 const path = require("path");
@@ -59,11 +59,15 @@ function resources(request, response) {
 }
 function notFound(request, response) {
     //error 404
-    response.writeHead(404, { "content-type": "text/html" });
-    response.end("<h1>not found</h1>");
+    fs.readFile(path.join(__dirname, '..', 'public', 'notFound.html'), (error, file) => {
+        response.writeHead(404, { 'content-type' : 'text/html'})
+        response.end(file)
+      })
+    
 }
 function badRequest(request, response) {
     //error 400
+    
     response.writeHead(400, { "content-type": "text/html" });
     response.end("<h1>bad request</h1>");
 }

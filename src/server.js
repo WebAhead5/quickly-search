@@ -1,8 +1,8 @@
+const dotenv  = require('dotenv')
+dotenv.config()
 const http = require("http");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 const router = require("./router");
-
-
 const server = http.createServer(router);
 
 server.listen(port,()=>

@@ -133,9 +133,6 @@ function loadContentToHtml(dataToLoad, container,isAppend = false){
             let calc = "min(80vh,80vw)";
             selectedItemImage.style.width = calc;
             selectedItemImage.style.height = `calc(${(min / max)} * ${calc})`;
-
-
-
         };
 
         container.appendChild(gif);
