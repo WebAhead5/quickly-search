@@ -15,7 +15,7 @@ tape.test('test "/"', t=>{
         .get("/")
         .expect(200)
         .expect("content-type", "text/html")
-        .end( (err,res)=>{
+        .end( (err)=>{
 
             t.error(err,"loaded");
             t.end()

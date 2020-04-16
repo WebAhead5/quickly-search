@@ -4,7 +4,7 @@ const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
 const querystring = require("querystring");
-env = require("dotenv").config()
+require("dotenv").config()
 
 const hostAndPaths = {
     search: "https://api.giphy.com/v1/gifs/search",

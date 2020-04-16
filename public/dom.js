@@ -1,4 +1,5 @@
 
+import logic from "./logic.js"
 //--------------------------------------------------------------------------------------
 const contents = document.getElementById('contentContainer');
 const suggestionsContainer = document.getElementById('suggestionsContainer');
