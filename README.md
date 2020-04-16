@@ -159,7 +159,6 @@ and to make thing less boring, The page will load gifs as you scroll infinitly!!
 
 ## Issues We Faced
 - no accessabilty support.
-- no were done testing at all. 
 - "tab" button does not travel between elements
 - it takes time for the wallpaper to load.
 
