@@ -67,14 +67,14 @@ const logic = {
      * @return {boolean} returns true of the scroller passed the provided percent (example return true if the scroller passes 50% or 0.5).
      */
     isScrollerPast:
-        function(scrollingDiv, posPercentage){
+        function (scrollingDiv, posPercentage) {
             // document bottom
             let height = scrollingDiv.clientHeight;
             let scrollableAreaSize = scrollingDiv.scrollHeight;
             let scrollTop = scrollingDiv.scrollTop;
 
             return (height + scrollTop) >= scrollableAreaSize * posPercentage * 0.999;
-    },
+        },
 
     runOnceDelay:
         /***
@@ -109,11 +109,13 @@ const logic = {
      * @return {string} - filtered string
      */
     filterInput:
-        function(str){
-            if(!str) return "";
+        function (str) {
 
-           let arr = str.match(/[a-zA-Z0-9 ]/gi);
-            if(!arr) return "";
+            if (!str || !str.trim()) return "";
+
+            let arr = str.match(/[a-zA-Z0-9 ]/gi);
+
+            if (!arr) return "";
 
             return arr.join("");
         }
