@@ -46,7 +46,9 @@ function initialize(){
 
     //set the search bar text change behaviour
     searchInputField.addEventListener('input', () => {
+        //filter input
         searchInputField.value = logic.filterInput(searchInputField.value);
+        //load data
         timeoutID_fetchData = logic.runOnceDelay(timeoutID_fetchData,timeoutMS,()=> loadData(searchInputField.value) );
 
     });
@@ -71,14 +73,14 @@ function initialize(){
 function loadData(str) {
 
     //hide container if the search-bar input is empty
-    contents.classList.toggle("hideContent", !str || str === "");
+    contents.classList.toggle("hideContent", !str );
 
     //hide wallpaper if the search-bar input is empty
-    wallpaperDiv.classList.toggle("wallpaperHidden", str && str !== "");
+    wallpaperDiv.classList.toggle("wallpaperHidden", str);
 
     //expand search-bar if the input is not empty
-    searchBarContainer.classList.toggle("searchBarContainer_withInput", str && str !== "");
-    searchAndSuggestionsContainer.classList.toggle("searchAndSuggestions_withInput", str && str !== "");
+    searchBarContainer.classList.toggle("searchBarContainer_withInput", str );
+    searchAndSuggestionsContainer.classList.toggle("searchAndSuggestions_withInput", str );
 
     //reset the elements count
     loadedImagesCount = 0;
@@ -184,7 +186,7 @@ function append_notScrollable_and_OnScroll() {
                 loadContentToHtml(jsonObj, contents, true);
             }
 
-            //
+
             let fetchContentFromBackend = function (){
 
                 //count the appended elements
