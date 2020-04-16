@@ -17,7 +17,7 @@ let selectedItemImage = document.getElementById("selectedItem");
 const contentLoadingCount= 10;
 const scrollingPercentage = .8; //at what percentage from the scroll bar to load the next images
 let  timeoutID_fetchData, timeoutID_notScrollable;
-let timeoutMS = 100;
+let timeoutMS = 300;
 let loadedImagesCount = 0;
 let canLoadContent = true;
 //--------------------------------------------------------------------------------------
@@ -58,7 +58,6 @@ function initialize(){
 
     //when an image is selected - press escape to close it
     document.addEventListener("keydown",e => {
-        console.log(e.code)
            if( e.code === "Escape"  && !selectedItemBackground.classList.contains("hidden"))
            selectedItemContainer.classList.toggle("hidden",true)
     });
@@ -70,7 +69,6 @@ function initialize(){
 
 //--------------------------------------------------------------------------------------
 function loadData(str) {
-
 
     //hide container if the search-bar input is empty
     contents.classList.toggle("hideContent", !str || str === "");
