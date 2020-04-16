@@ -154,7 +154,7 @@ and to make thing less boring, The page will load gifs as you scroll infinitly!!
 - set random sized images/gif container using the grid layout.
 -  lazy load images (effect: from the center outwards effect), example {%youtube aUjBvuUdkhg %}
 -  show logs in developement only
- 
+- add more testers for backend and front end :/
 
 
 ## Issues We Faced
