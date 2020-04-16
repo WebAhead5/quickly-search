@@ -14,8 +14,8 @@ let selectedItemContainer = document.getElementById("selectedItemContainer");
 let selectedItemBackground = document.getElementById("outsideSelectedItem");
 let selectedItemImage = document.getElementById("selectedItem");
 //--------------------------------------------------------------------------------------
-const contentLoadingCount= 10;
-const scrollingPercentage = .8; //at what percentage from the scroll bar to load the next images
+const contentLoadingCount= 15;
+const scrollingPercentage = .9; //at what percentage from the scroll bar to load the next images
 let  timeoutID_fetchData, timeoutID_notScrollable;
 let timeoutMS = 300;
 let loadedImagesCount = 0;
@@ -71,6 +71,8 @@ function initialize(){
 
 //--------------------------------------------------------------------------------------
 function loadData(str) {
+
+
 
     //hide container if the search-bar input is empty
     contents.classList.toggle("hideContent", !str );
