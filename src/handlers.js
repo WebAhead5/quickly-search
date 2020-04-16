@@ -4,6 +4,7 @@ const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
 const querystring = require("querystring");
+env = require("dotenv").config()
 
 const hostAndPaths = {
     search: "https://api.giphy.com/v1/gifs/search",
@@ -13,7 +14,7 @@ const hostAndPaths = {
     random: "https://api.giphy.com/v1/gifs/trending",
     wallpaper: "https://bing.biturl.top/?resolution=1920&format=json"
 };
-const api_key_giphy = process.env.API_GIPHY || "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
+const api_key_giphy =  process.env.API_GIPHY ;
 
 
 
