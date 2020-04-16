@@ -112,7 +112,7 @@ const logic = {
         function(str){
             if(!str) return "";
 
-           let arr = str.match(/[a-zA-Z0-9]/gi);
+           let arr = str.match(/[a-zA-Z0-9 ]/gi);
             if(!arr) return "";
 
             return arr.join("");
