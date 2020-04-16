@@ -4,6 +4,7 @@ const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
 const querystring = require("querystring");
+
 const hostAndPaths = {
     search: "https://api.giphy.com/v1/gifs/search",
     autoComplete: "https://api.giphy.com/v1/gifs/search/tags",
@@ -12,8 +13,7 @@ const hostAndPaths = {
     random: "https://api.giphy.com/v1/gifs/trending",
     wallpaper: "https://bing.biturl.top/?resolution=1920&format=json"
 };
-
-const api_key_giphy = process.env.API_GIPHY ;
+const api_key_giphy = process.env.API_GIPHY || "ZrUrI0GTfFYUKWIV78zDckNWUQ2DLfBo";
 
 
 
@@ -33,9 +33,9 @@ function home(request, response) {
 
 }
 function resources(request, response) {
-    const url = request.url;
-    const exten = url.split('.')[1];
-    const extenType = {
+    const requestURL = request.url;
+    const ext = requestURL.split('.')[1];
+    const extType = {
         html: 'text/html',
         css: 'text/css',
         js: 'application/javascript',
@@ -46,17 +46,15 @@ function resources(request, response) {
         gif: 'image/gif',
         svg: 'image/svg+xml'
     };
-    const filepath = path.join(__dirname, '..', "public", url);
+    const filepath = path.join(__dirname, '..', "public", requestURL);
     fs.readFile(filepath, (error, file) => {
         if (error) {
             badRequest(request, response)
         } else {
-            response.writeHead(200, { 'content-type': extenType[exten] });
+            response.writeHead(200, { 'content-type': extType[ext] });
             response.end(file);
         }
     })
-
-
 }
 function notFound(request, response) {
     //error 404
@@ -74,24 +72,23 @@ function badRequest(request, response) {
 }
 
 
-/***
- *  if a get request for "/autocomplete" with a "q" param is made (example: "/autocomplete?q=someText" )
- *  return an array of auto-complete options (strings)
+ /***
+ *  if a get request for "/autocomplete"  is made (example: "/autocomplete?q=someText" )
+ *  return an array of auto-complete options (strings).
  * @param request
  * @param response
  */
 function getAutoComplete(request, response) {
     let params = getParamsFromRequest(request);
-    fetchTextFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q: params.q})
+    fetchTextFromGiphyRequest(request,response,hostAndPaths.autoComplete,{q: params.q},true)
 }
 
-
 /***
- *  if a get request for "/suggestions" with a "q" param is made (example: "/suggestions?q=someText" )
- *  return an array of suggestions - words related to the provided word (strings)
+ *  if a get request for "/suggestions"  is made (example: "/suggestions?q=someText" )
+ *  return an array of suggestions (strings).
  * @param request
  * @param response
- */ 
+ */
 function getSuggestions(request, response) {
 
     let params = getParamsFromRequest(request);
@@ -99,14 +96,9 @@ function getSuggestions(request, response) {
 
 }
 
-
 /***
- *  if a get request for "/search" with a "q" param is made (example: "/search?q=someText" ).
- *
- *  [optional] a "count" param can be provided as well - indication the number of image objects to return (default 25)
- *  (example: "/search?q=someText&count=5")
- *
- *  return an array of objects containing urls to the provided word (strings).
+ *  if a get request for "/search"  is made (example: "/search?q=someText&count=5" )
+ *  return an array objects containing an info about the images
  * @param request
  * @param response
  */
@@ -118,15 +110,27 @@ function getSearch(request,response){
 
 }
 
+/***
+ *  if a get request for "/trending"  is made (example: "/trending?q=someText" )
+ *  return an array objects containing an info about the images.
+ * @param request
+ * @param response
+ */
 function getTrending(request,response){
     let params = getParamsFromRequest(request);
     fetchImagesFromGiphyRequest(request,response,hostAndPaths.trending,{q:params.q ,limit:params.count || 25} )
 
 }
 
+/***
+ *  if a get request for "/wallpaper"  is made (example: "/wallpaper?type=random" )
+ *  return an array objects containing an info about the images.
+ * @param request
+ * @param response
+ */
 function getWallpaper(request, response) {
-    let params = getParamsFromRequest(request)
-    let imagesIndex = 1
+    let params = getParamsFromRequest(request);
+    let imagesIndex = 1;
     if(params.type === 'random'){
         imagesIndex = Math.floor(Math.random() * 8)
     }
@@ -134,7 +138,7 @@ function getWallpaper(request, response) {
         if (error) {
             badRequest(request, response)
         } else {
-            response.writeHead(200, {'content-type': 'application/json'})
+            response.writeHead(200, {'content-type': 'application/json'});
             response.end(JSON.stringify(result.data))
         }
     })
@@ -143,14 +147,26 @@ function getWallpaper(request, response) {
 
 
 
+/***
+ * returns an object of the query params  that are in the request.url.
+ * @param request
+ */
 function getParamsFromRequest(request){
     let search = url.parse(request.url).query;
 
     return  querystring.parse(search);
 }
-function fetchImagesFromGiphyRequest(request,response,apiRequestLink,params = {} ) {
 
-    fetchFromApi(apiRequestLink, {...params, api_key: api_key_giphy}, (error, res) => {
+/***
+ * handles the retrieval of the trending and search result images from giphy's api.
+ * @param request
+ * @param response
+ * @param apiRequestURL - Giphy api url
+ * @param params - the params to add to the url other than the API_KEY
+ */
+function fetchImagesFromGiphyRequest(request,response,apiRequestURL,params = {} ) {
+
+    fetchFromApi(apiRequestURL, {...params, api_key: api_key_giphy}, (error, res) => {
         if (error) {
             badRequest(request, response)
         } else {
@@ -164,9 +180,19 @@ function fetchImagesFromGiphyRequest(request,response,apiRequestLink,params = {}
     })
 
 }
-function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {} ) {
 
-    fetchFromApi(apiRequestLink ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
+
+/***
+ * handles the retrieval of the suggestions and auto-complete options from giphy's api.
+ * @param request
+ * @param response
+ * @param apiRequestURL - Giphy api url
+ * @param params - the params to add to the url other than the API_KEY
+ * @param addSearchToResult - if true adds the search query to the results
+ */
+function fetchTextFromGiphyRequest(request,response,apiRequestURL,params = {},addSearchToResult = false ) {
+
+    fetchFromApi(apiRequestURL ,{ ...params ,api_key: api_key_giphy }, (error, res) => {
 
         response.writeHead(200, {"content-type": "application/json"});
 
@@ -174,12 +200,22 @@ function fetchTextFromGiphyRequest(request,response,apiRequestLink,params = {} )
 
         else {
             let resultArr = Array.from(res.data.data).map(x=>x.name);
+            if(addSearchToResult)
+                resultArr.unshift(params.q);
             response.end(JSON.stringify(resultArr))
         }
 
 
     });
 }
+
+/***
+ * adds the parameters to the api url, and make a get request to that url calls the callback function on response or on error.
+ *
+ * @param {string} apiUrl -  an api url
+ * @param {object} params - the parameters to add to the url
+ * @param {function(error:object , result:object )} cb - a callback function
+ */
 function fetchFromApi(apiUrl, params = {}, cb) {
     let urlObj = new url.URL(apiUrl);
 
@@ -199,6 +235,5 @@ function fetchFromApi(apiUrl, params = {}, cb) {
 
 
 
-
-module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch , getTrending, getWallpaper}
+module.exports = { home, notFound, resources, getAutoComplete, getSuggestions,getSearch , getTrending, getWallpaper};
 

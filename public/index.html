@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
     <title>Document</title>
     <link rel="stylesheet" href="./style.css">
     <link rel="shortcut icon" href="./resources/icon-search.svg" type="image/x-icon">
@@ -13,22 +13,26 @@
 <div id="bodyContainer">
     <div id="searchAndSuggestions">
         <div id="searchBarContainer">
-            <input type="search" id="searchInput" placeholder="search..." list="autocompleteContainer">
+            <input  type="search" id="searchInput" placeholder="search..." list="autocompleteContainer">
             <datalist id="autocompleteContainer" >
 
             </datalist>
             <img src="./resources/icon-search.svg" alt="Magnifying glass icon" id="searchButton">
         </div>
         <div id="suggestionsContainer">
-
-
-        </div>
+      </div>
     </div>
 
-    <div id="contentContainer" class="hidden">
+    <div id="contentContainer" class="hideContent">
 
 
     </div>
+
+    <div id="selectedItemContainer" class="hidden">
+        <div id="selectedItem" ></div>
+        <div id="outsideSelectedItem"></div>
+    </div>
+
     <div id="wallpaperImage"></div>
 </div>
 
