@@ -25,7 +25,8 @@
     "nodemon": "^2.0.3",
     "nyc": "^15.0.1",
     "tap-spec": "^5.0.0",
-    "tape": "^4.13.2"
+    "tape": "^4.13.2",
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "axios": "^0.19.2",
