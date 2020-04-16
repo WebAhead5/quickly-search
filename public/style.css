@@ -4,6 +4,7 @@
     --color-menu-background : #1E1A40;
     --color-bubble:#67A6C0;
     --border-element: 2px solid #F9A5A5;
+
 }
 * {
     margin: 0;
@@ -40,6 +41,7 @@ body
     align-items: center;
 }
 
+
 #wallpaperImage{
     position: absolute;
     left: 0;
@@ -58,6 +60,20 @@ body
 .wallpaperHidden{
     opacity: 0.1 !important;
 }
+
+#credits{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 6;
+    padding: 5px;
+    font-size: small;
+    background-color:black;
+    opacity: .4;
+    color: #8e8585;
+    pointer-events: none;
+}
+
 
 #searchAndSuggestions{
     width: 100vw;
@@ -88,6 +104,7 @@ body
 
 }
 
+
 #searchButton{
     position: absolute;
     right: 5px;
@@ -112,6 +129,7 @@ body
     border: 1px black solid;
 
 }
+
 
 
 #contentContainer{
@@ -139,6 +157,7 @@ body
 }
 .contentElement{
 }
+
 
 #suggestionsContainer{
     display: flex;
@@ -227,5 +246,8 @@ body
         min-width:  90vw !important;
 
     }
-
+    #credits{
+        top :0;
+        bottom: auto;
+    }
 }
